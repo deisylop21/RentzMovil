@@ -1,19 +1,22 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Importamos Provider
+import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
+import 'pages/register_page.dart';
+import 'pages/cart_page.dart';
+import 'pages/product_detail_page.dart'; // Importa la nueva página
 import 'models/auth_model.dart';
 import 'theme/app_theme.dart';
-import 'pages/register_page.dart';
+import 'pages/profile_page.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthModel()), // Proveemos el modelo global
+        ChangeNotifierProvider(create: (_) => AuthModel()),
       ],
-      child: MyApp(), // Usamos MyApp como el widget principal
+      child: MyApp(),
     ),
   );
 }
@@ -21,15 +24,23 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final authModel = Provider.of<AuthModel>(context, listen: false);
+    authModel.loadSession();
+
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Oculta el banner de debug
       title: 'Renta de Mobiliario',
       theme: AppTheme.getTheme(),
-      initialRoute: '/home', // Iniciamos directamente en la pantalla Home
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/home',
       routes: {
-        '/home': (context) => HomePage(), // Pantalla principal
-        '/login': (context) => LoginPage(), // Pantalla de login
+        '/home': (context) => HomePage(),
+        '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
+        '/cart': (context) => CartPage(),
+        '/profile': (context) => ProfilePage(),
+        '/product-detail': (context) => ProductDetailPage(
+          productId: ModalRoute.of(context)!.settings.arguments as int,
+        ),
       },
     );
   }

@@ -1,3 +1,4 @@
+// lib/models/product_model.dart
 class Product {
   final int idProducto;
   final String nombreProducto;
@@ -9,6 +10,7 @@ class Product {
   final String urlImagenPrincipal;
   final bool esPromocion;
   final String? precioPromocion;
+  final List<String> imagenes; // Nueva propiedad para las imágenes adicionales
 
   Product({
     required this.idProducto,
@@ -21,9 +23,9 @@ class Product {
     required this.urlImagenPrincipal,
     required this.esPromocion,
     this.precioPromocion,
+    required this.imagenes, // Incluimos la lista de imágenes
   });
 
-  // Método para convertir JSON a objeto Product
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       idProducto: json['id_producto'],
@@ -36,6 +38,9 @@ class Product {
       urlImagenPrincipal: json['url_imagenprincipal'],
       esPromocion: json['es_promocion'] == 1,
       precioPromocion: json['precio_promocion'],
+      imagenes: json['imagenes'] != null
+          ? List<String>.from(json['imagenes']) // Convertimos la lista de imágenes
+          : [], // Asignamos una lista vacía si es null
     );
   }
 }

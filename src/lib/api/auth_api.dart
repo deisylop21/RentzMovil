@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
+import '../models/profile_model.dart';
 
 class AuthApi {
   final String baseUrl = "https://darkred-donkey-427653.hostingersite.com/api/v1";
@@ -50,6 +51,37 @@ class AuthApi {
     } else {
       // Otro error
       throw Exception("Error al registrar usuario: ${response.statusCode}");
+    }
+  }
+
+  // Méodo para obtener el perfil del usuario
+  Future<Profile> fetchProfile(String token) async {
+    final response = await http.get(
+      Uri.parse("$baseUrl/cliente/perfil"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      return Profile.fromJson(responseData['data']);
+    } else {
+      throw Exception("Error al cargar el perfil: ${response.statusCode}");
+    }
+  }
+
+  // Méodo para actualizar el perfil del usuario
+  Future<void> updateProfile(String token, Map<String, dynamic> profileData) async {
+    final response = await http.put(
+      Uri.parse("$baseUrl/cliente/perfil"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: json.encode(profileData),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error al actualizar el perfil: ${response.statusCode}");
     }
   }
 }
