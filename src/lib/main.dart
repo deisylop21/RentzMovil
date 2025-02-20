@@ -9,6 +9,7 @@ import 'pages/product_detail_page.dart'; // Importa la nueva página
 import 'models/auth_model.dart';
 import 'theme/app_theme.dart';
 import 'pages/profile_page.dart';
+import 'pages/renta_form_page.dart';
 
 void main() {
   runApp(
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/cart': (context) => CartPage(),
         '/profile': (context) => ProfilePage(),
+        '/renta-form': (context) => RentaFormPage(),
         '/product-detail': (context) => ProductDetailPage(
           productId: ModalRoute.of(context)!.settings.arguments as int,
         ),

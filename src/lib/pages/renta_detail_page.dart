@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../api/rentas_api.dart';
 import '../models/renta_model.dart';
 import '../models/auth_model.dart';
@@ -21,6 +22,22 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
     super.initState();
     final authModel = Provider.of<AuthModel>(context, listen: false);
     _rentaFuture = RentasApi().fetchRentaById(authModel.token!, widget.idRenta);
+  }
+
+  Future<void> _realizarPago() async {
+    final authModel = Provider.of<AuthModel>(context, listen: false);
+    try {
+      String urlPago = await RentasApi().generarPago(authModel.token!, widget.idRenta);
+      if (await canLaunch(urlPago)) {
+        await launch(urlPago);
+      } else {
+        throw 'No se pudo abrir el enlace de pago';
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $error")),
+      );
+    }
   }
 
   @override
@@ -65,6 +82,14 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                   Text("${renta.calle} ${renta.numeroExterior}, ${renta.colonia}, CP: ${renta.codigoPostal}"),
                   Text("Referencia: ${renta.referencia}"),
                   Text("Contacto: ${renta.numeroContacto}"),
+                  SizedBox(height: 16),
+                  if (renta.estado == "Pendiente_Pago") // Solo muestra el botón si el estado es "Pendiente_Pago"
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _realizarPago,
+                        child: Text("Pagar ahora"),
+                      ),
+                    ),
                 ],
               ),
             );

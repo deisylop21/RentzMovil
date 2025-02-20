@@ -24,7 +24,7 @@ class _CartPageState extends State<CartPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Debes iniciar sesión para usar el carrito")),
         );
-        Navigator.pop(context); // Regresa a la pantalla anterior
+        Navigator.pop(context);
       });
     } else {
       _cartFuture = CartApi().fetchCart(authModel.token!);
@@ -147,6 +147,19 @@ class _CartPageState extends State<CartPage> {
                       },
                     ),
                   ],
+                ),
+                SizedBox(height: 8),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/renta-form',
+                        arguments: item, // Enviar el objeto completo
+                      );
+                    },
+                    child: Text("Rentar"),
+                  ),
                 ),
               ],
             ),
