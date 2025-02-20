@@ -1,4 +1,3 @@
-// lib/pages/login_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Importamos Provider
 import '../api/auth_api.dart';
@@ -48,9 +47,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Cambiamos el color de fondo del Scaffold
+      backgroundColor: Color(0xFFFEF5C8),
       appBar: AppBar(
         title: Text("Iniciar Sesión"),
         centerTitle: true,
+        // Cambiamos el color de fondo del AppBar
+        backgroundColor: Color(0xFF013750),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,7 +64,23 @@ class _LoginPageState extends State<LoginPage> {
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: "Correo Electrónico",
+                labelStyle: TextStyle(
+                  // Cambiamos el color del texto del label
+                  color: Color(0xFF013750),
+                ),
                 border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    // Cambiamos el color del borde del TextField
+                    color: Color(0xFF2C6B74),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    // Cambiamos el color del borde del TextField cuando está enfocado
+                    color: Color(0xFF00988D),
+                  ),
+                ),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -70,7 +89,23 @@ class _LoginPageState extends State<LoginPage> {
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: "Contraseña",
+                labelStyle: TextStyle(
+                  // Cambiamos el color del texto del label
+                  color: Color(0xFF013750),
+                ),
                 border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    // Cambiamos el color del borde del TextField
+                    color: Color(0xFF2C6B74),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    // Cambiamos el color del borde del TextField cuando está enfocado
+                    color: Color(0xFF00988D),
+                  ),
+                ),
               ),
               obscureText: true,
             ),
@@ -83,19 +118,34 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _isLoading ? null : _login,
+              style: ElevatedButton.styleFrom(
+                // Cambiamos el color del botón
+                backgroundColor: Color(0xFF00988D),
+              ),
               child: _isLoading
                   ? CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               )
-                  : Text("Iniciar Sesión"),
-
+                  : Text(
+                "Iniciar Sesión",
+                style: TextStyle(
+                  // Cambiamos el color del texto del botón
+                  color: Color(0xFFFEF5C8),
+                ),
+              ),
             ),
             SizedBox(height: 16),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/register');
               },
-              child: Text("¿No tienes cuenta? Regístrate aquí"),
+              child: Text(
+                "¿No tienes cuenta? Regístrate aquí",
+                style: TextStyle(
+                  // Cambiamos el color del texto del botón de texto
+                  color: Color(0xFFF23E02),
+                ),
+              ),
             ),
           ],
         ),
