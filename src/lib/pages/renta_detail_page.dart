@@ -28,9 +28,9 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
     final authModel = Provider.of<AuthModel>(context, listen: false);
     try {
       String urlPago = await RentasApi().generarPago(authModel.token!, widget.idRenta);
-      if (await canLaunch(urlPago)) {
-        await launch(urlPago);
-      } else {
+      final Uri uri = Uri.parse(urlPago);
+
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         throw 'No se pudo abrir el enlace de pago';
       }
     } catch (error) {
