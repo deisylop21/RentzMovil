@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatelessWidget {
+  final ValueChanged<String> onSearchChanged;
+
+  SearchBarWidget({required this.onSearchChanged});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,6 +20,7 @@ class SearchBarWidget extends StatelessWidget {
             border: InputBorder.none,
             prefixIcon: Icon(Icons.search, color: Colors.black),
           ),
+          onChanged: onSearchChanged,
         ),
       ),
     );

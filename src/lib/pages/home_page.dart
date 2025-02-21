@@ -1,27 +1,61 @@
-// lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../api/product_api.dart';
 import '../widgets/product_card.dart';
 import '../models/auth_model.dart';
 import '../models/product_model.dart';
-import '../widgets/app_bar_widget.dart'; // Importa el AppBar modular
-import '../widgets/search_bar_widget.dart'; // Importa la barra de búsqueda modular
-import '../widgets/bottom_navigation_bar_widget.dart'; // Importa la barra de navegación inferior modular
+import '../widgets/app_bar_widget.dart';
+import '../widgets/search_bar_widget.dart';
+import '../widgets/bottom_navigation_bar_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final ProductApi productApi = ProductApi();
+  List<Product> _products = [];
+  List<Product> _filteredProducts = [];
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    try {
+      final products = await productApi.fetchProducts();
+      setState(() {
+        _products = products;
+        _filteredProducts = products;
+      });
+    } catch (e) {
+      // Manejar el error si es necesario
+    }
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+      _filteredProducts = _products
+          .where((product) =>
+          product.nombreProducto.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final authModel = Provider.of<AuthModel>(context);
 
     return Scaffold(
-      appBar: buildAppBar(context, authModel), // Usa el AppBar modular
+      appBar: buildAppBar(context, authModel, _onSearchChanged),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Mostrar el saludo solo si el usuario está autenticado
           if (authModel.isAuthenticated)
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -34,52 +68,39 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-          // Mostrar los productos
           Expanded(
-            child: _buildProductList(context),
+            child: _buildProductList(),
           ),
         ],
       ),
-      bottomNavigationBar: buildBottomNavigationBar(context, authModel), // Usa la barra de navegación inferior modular
+      bottomNavigationBar: buildBottomNavigationBar(context, authModel),
     );
   }
 
-  // Método para construir la lista de productos
-  Widget _buildProductList(BuildContext context) {
-    return FutureBuilder<List<Product>>(
-      future: productApi.fetchProducts(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text("No hay productos disponibles"));
-        } else {
-          final products = snapshot.data!;
-          return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-            ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return ProductCard(
-                product: product,
-                onTap: () {
-                  // Navegar a la pantalla de detalles del producto
-                  Navigator.pushNamed(
-                    context,
-                    '/product-detail',
-                    arguments: product.idProducto,
-                  );
-                },
+  Widget _buildProductList() {
+    if (_filteredProducts.isEmpty) {
+      return Center(child: Text("No hay productos disponibles"));
+    } else {
+      return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.7,
+        ),
+        itemCount: _filteredProducts.length,
+        itemBuilder: (context, index) {
+          final product = _filteredProducts[index];
+          return ProductCard(
+            product: product,
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/product-detail',
+                arguments: product.idProducto,
               );
             },
           );
-        }
-      },
-    );
+        },
+      );
+    }
   }
 }
