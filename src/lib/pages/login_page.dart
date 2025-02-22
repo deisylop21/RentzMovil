@@ -15,22 +15,20 @@ class _LoginPageState extends State<LoginPage> {
   final AuthApi _authApi = AuthApi();
   bool _isLoading = false;
   String? _errorMessage;
+  bool _isPasswordVisible = false; // Controlador para mostrar/ocultar la contraseña
 
   Future<void> _login() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
-
     try {
       final Map<String, dynamic> result = await _authApi.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
-
       // Guardamos el token y el usuario en el modelo global
       Provider.of<AuthModel>(context, listen: false).login(result['token'], result['user']);
-
       // Navegamos de vuelta a la pantalla Home
       Navigator.pop(context);
     } catch (e) {
@@ -47,107 +45,138 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Cambiamos el color de fondo del Scaffold
-      backgroundColor: Color(0xFFFEF5C8),
+      backgroundColor: Color(0xFFFEF5C8), // Fondo claro
       appBar: AppBar(
-        title: Text("Iniciar Sesión"),
+        title: Text(
+          "Iniciar Sesión",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
-        // Cambiamos el color de fondo del AppBar
-        backgroundColor: Color(0xFF013750),
+        backgroundColor: Color(0xFF013750), // Azul oscuro
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: "Correo Electrónico",
-                labelStyle: TextStyle(
-                  // Cambiamos el color del texto del label
-                  color: Color(0xFF013750),
-                ),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    // Cambiamos el color del borde del TextField
-                    color: Color(0xFF2C6B74),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo
+              Image.asset(
+                'assets/images/logo.png', // Ruta de tu logo
+                width: 150,
+                height: 150,
+              ),
+              SizedBox(height: 20),
+
+              // Campo de correo electrónico
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: "Correo Electrónico",
+                  labelStyle: TextStyle(color: Color(0xFF013750)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF00988D)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF013750)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    // Cambiamos el color del borde del TextField cuando está enfocado
-                    color: Color(0xFF00988D),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 16),
+
+              // Campo de contraseña con ícono de ojo
+              TextField(
+                controller: _passwordController,
+                obscureText: !_isPasswordVisible, // Alternar visibilidad
+                decoration: InputDecoration(
+                  labelText: "Contraseña",
+                  labelStyle: TextStyle(color: Color(0xFF013750)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF00988D)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF013750)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Color(0xFF00988D),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
                   ),
                 ),
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: "Contraseña",
-                labelStyle: TextStyle(
-                  // Cambiamos el color del texto del label
-                  color: Color(0xFF013750),
+              SizedBox(height: 16),
+
+              // Mensaje de error
+              if (_errorMessage != null)
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red, fontSize: 14),
                 ),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    // Cambiamos el color del borde del TextField
-                    color: Color(0xFF2C6B74),
+              SizedBox(height: 16),
+
+              // Botón de inicio de sesión (mejorado)
+              ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFF23E02), // Naranja vibrante
+                  padding: EdgeInsets.symmetric(vertical: 18, horizontal: 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25), // Bordes redondeados pronunciados
+                  ),
+                  elevation: 5, // Sombra suave
+                ),
+                child: _isLoading
+                    ? CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                )
+                    : Text(
+                  "Iniciar Sesión",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    // Cambiamos el color del borde del TextField cuando está enfocado
-                    color: Color(0xFF00988D),
+              ),
+              SizedBox(height: 16),
+
+              // Enlace para registrarse
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: Text(
+                  "¿No tienes cuenta? Regístrate aquí",
+                  style: TextStyle(
+                    color: Color(0xFF00988D), // Verde azulado
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              obscureText: true,
-            ),
-            SizedBox(height: 16),
-            if (_errorMessage != null)
-              Text(
-                _errorMessage!,
-                style: TextStyle(color: Colors.red),
-              ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _login,
-              style: ElevatedButton.styleFrom(
-                // Cambiamos el color del botón
-                backgroundColor: Color(0xFF00988D),
-              ),
-              child: _isLoading
-                  ? CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              )
-                  : Text(
-                "Iniciar Sesión",
-                style: TextStyle(
-                  // Cambiamos el color del texto del botón
-                  color: Color(0xFFFEF5C8),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/register');
-              },
-              child: Text(
-                "¿No tienes cuenta? Regístrate aquí",
-                style: TextStyle(
-                  // Cambiamos el color del texto del botón de texto
-                  color: Color(0xFFF23E02),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

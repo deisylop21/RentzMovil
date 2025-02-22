@@ -10,6 +10,7 @@ import 'models/auth_model.dart';
 import 'theme/app_theme.dart';
 import 'pages/profile_page.dart';
 import 'pages/renta_form_page.dart';
+import 'pages/direcciones_page.dart';
 
 void main() {
   runApp(
