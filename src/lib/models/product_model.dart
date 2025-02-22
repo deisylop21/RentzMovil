@@ -28,19 +28,17 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      idProducto: json['id_producto'],
-      nombreProducto: json['nombre_producto'],
-      categoria: json['categoria'],
-      cantidadActual: json['cantidad_actual'],
-      precio: json['precio'],
-      descripcion: json['descripcion'],
-      material: json['material'],
-      urlImagenPrincipal: json['url_imagenprincipal'],
+      idProducto: json['id_producto'] ?? 0, // Evitar null en int
+      nombreProducto: json['nombre_producto'] ?? 'Sin nombre',
+      categoria: json['categoria'] ?? 'Desconocida',
+      cantidadActual: json['cantidad_actual'] ?? 0,
+      precio: json['precio'] ?? '0.00',
+      descripcion: json['descripcion'] ?? 'Sin descripción',
+      material: json['material'] ?? 'Desconocido',
+      urlImagenPrincipal: json['url_imagenprincipal'] ?? '',
       esPromocion: json['es_promocion'] == 1,
-      precioPromocion: json['precio_promocion'],
-      imagenes: json['imagenes'] != null
-          ? List<String>.from(json['imagenes']) // Convertimos la lista de imágenes
-          : [], // Asignamos una lista vacía si es null
+      precioPromocion: json['precio_promocion'], // Se mantiene como String?
+      imagenes: json['imagenes'] != null ? List<String>.from(json['imagenes']) : [],
     );
   }
 }
