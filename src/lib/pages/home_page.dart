@@ -18,6 +18,8 @@ class _HomePageState extends State<HomePage> {
   List<Product> _products = [];
   List<Product> _filteredProducts = [];
   String _searchQuery = '';
+  bool _isLoading = true; // Nuevo estado para controlar la carga
+  String? _error; // Nuevo estado para manejar errores
 
   @override
   void initState() {
@@ -27,24 +29,100 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchProducts() async {
     try {
-      final products = await productApi.fetchProducts();
       setState(() {
-        _products = products;
-        _filteredProducts = products;
+        _isLoading = true;
+        _error = null;
       });
+
+      final products = await productApi.fetchProducts();
+
+      // Verifica si el widget sigue montado antes de actualizar el estado
+      if (mounted) {
+        setState(() {
+          _products = products;
+          _filteredProducts = products;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      // Manejar el error si es necesario
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+      print('Error fetching products: $e'); // Log del error
     }
   }
 
   void _onSearchChanged(String query) {
     setState(() {
       _searchQuery = query;
-      _filteredProducts = _products
-          .where((product) =>
-          product.nombreProducto.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
+      _filteredProducts = _products.where((product) {
+        final nombre = product.nombreProducto ?? ''; // Evitar null
+        return nombre.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
     });
+  }
+
+  Widget _buildProductList() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Error: $_error'),
+            ElevatedButton(
+              onPressed: _fetchProducts,
+              child: Text('Reintentar'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_filteredProducts.isEmpty) {
+      return Center(
+        child: Text(
+            _searchQuery.isEmpty
+                ? "No hay productos disponibles"
+                : "No se encontraron productos que coincidan con la búsqueda"
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _fetchProducts,
+      child: GridView.builder(
+        padding: EdgeInsets.all(16.0),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.7,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: _filteredProducts.length,
+        itemBuilder: (context, index) {
+          final product = _filteredProducts[index];
+          return ProductCard(
+            product: product,
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/product-detail',
+                arguments: product.idProducto,
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -75,32 +153,5 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: buildBottomNavigationBar(context, authModel),
     );
-  }
-
-  Widget _buildProductList() {
-    if (_filteredProducts.isEmpty) {
-      return Center(child: Text("No hay productos disponibles"));
-    } else {
-      return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.7,
-        ),
-        itemCount: _filteredProducts.length,
-        itemBuilder: (context, index) {
-          final product = _filteredProducts[index];
-          return ProductCard(
-            product: product,
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/product-detail',
-                arguments: product.idProducto,
-              );
-            },
-          );
-        },
-      );
-    }
   }
 }

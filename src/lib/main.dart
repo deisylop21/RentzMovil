@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => CartPage(),
         '/profile': (context) => ProfilePage(),
         '/renta-form': (context) => RentaFormPage(),
+        '/direcciones': (context) => DireccionesPage(),
         '/product-detail': (context) => ProductDetailPage(
           productId: ModalRoute.of(context)!.settings.arguments as int,
         ),
