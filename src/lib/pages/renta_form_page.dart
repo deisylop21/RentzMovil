@@ -4,6 +4,8 @@ import '../models/auth_model.dart';
 import '../models/cart_model.dart';
 import '../models/renta2_model.dart';
 import '../api/rentas_api.dart';
+import '../api/direccion_api.dart'; // Importar API de direcciones
+import '../models/direccion_model.dart'; // Importar modelo de direcciones
 
 class RentaFormPage extends StatefulWidget {
   @override
@@ -14,12 +16,39 @@ class _RentaFormPageState extends State<RentaFormPage> {
   late CartItem item;
   DateTime? fechaInicio;
   late double total;
+  List<Direccion> direcciones = []; // Lista de direcciones
+  Direccion? direccionSeleccionada; // Dirección seleccionada
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     item = ModalRoute.of(context)!.settings.arguments as CartItem;
     total = double.parse(item.total) + 50; // Total con costo de envío
+    _cargarDirecciones();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDirecciones();
+  }
+
+  Future<void> _cargarDirecciones() async {
+    final authModel = Provider.of<AuthModel>(context, listen: false);
+    List<Direccion> fetchedDirecciones = await DireccionesApi().fetchDirecciones(authModel.token!);
+
+    setState(() {
+      direcciones = fetchedDirecciones;
+
+      if (direcciones.isNotEmpty) {
+        direccionSeleccionada = direcciones.firstWhere(
+              (dir) => dir.id == direccionSeleccionada?.id,
+          orElse: () => direcciones[0], // Si no la encuentra, usa la primera
+        );
+      } else {
+        direccionSeleccionada = null;
+      }
+    });
   }
 
   Future<void> _rentarProducto() async {
@@ -29,13 +58,19 @@ class _RentaFormPageState extends State<RentaFormPage> {
       );
       return;
     }
+    if (direccionSeleccionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Selecciona una dirección")),
+      );
+      return;
+    }
 
     final authModel = Provider.of<AuthModel>(context, listen: false);
     final fechaFinal = fechaInicio!.add(Duration(days: 2)); // +2 días
 
     final renta = Renta2(
       idProducto: item.idProducto,
-      idDireccion: 1,
+      idDireccion: direccionSeleccionada!.id!,
       fechaInicio: fechaInicio!.toIso8601String(),
       fechaFinal: fechaFinal.toIso8601String(),
       costoEnvio: 50,
@@ -69,6 +104,25 @@ class _RentaFormPageState extends State<RentaFormPage> {
             SizedBox(height: 10),
             Text("Costo total: \$${total.toStringAsFixed(2)}"),
             SizedBox(height: 20),
+
+            // Selección de dirección
+            DropdownButton<Direccion>(
+              value: direccionSeleccionada,
+              onChanged: (Direccion? nuevaDireccion) {
+                setState(() {
+                  direccionSeleccionada = nuevaDireccion;
+                });
+              },
+              items: direcciones.map<DropdownMenuItem<Direccion>>((Direccion direccion) {
+                return DropdownMenuItem<Direccion>(
+                  value: direccion,
+                  child: Text(direccion.calle + " #" + direccion.numeroExterior),
+                );
+              }).toList(),
+            ),
+
+            SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () async {
                 DateTime? pickedDate = await showDatePicker(
