@@ -1,18 +1,21 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart'; // Importar intl para fechas
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'pages/cart_page.dart';
-import 'pages/product_detail_page.dart'; // Importa la nueva página
+import 'pages/product_detail_page.dart';
 import 'models/auth_model.dart';
 import 'theme/app_theme.dart';
 import 'pages/profile_page.dart';
 import 'pages/renta_form_page.dart';
 import 'pages/direcciones_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Asegurar inicialización de widgets
+  await initializeDateFormatting('es', null); // Cargar datos de localización
+
   runApp(
     MultiProvider(
       providers: [

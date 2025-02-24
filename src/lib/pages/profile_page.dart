@@ -4,6 +4,7 @@ import '../api/auth_api.dart';
 import '../models/auth_model.dart';
 import '../models/profile_model.dart';
 import 'home_page.dart';
+import '../theme/app_theme.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -132,228 +133,411 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  Widget _buildProfileImage() {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppTheme.primaryColor.withOpacity(0.2),
+              width: 4,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: 60,
+            backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+            backgroundImage: NetworkImage(
+              _urlPerfilController.text.isNotEmpty
+                  ? _urlPerfilController.text
+                  : 'https://via.placeholder.com/150',
+            ),
+            onBackgroundImageError: (_, __) {
+              setState(() {
+                _urlPerfilController.text = '';
+              });
+            },
+          ),
+        ),
+        if (_isEditing)
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppTheme.secondaryColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: Icon(
+                Icons.edit,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard(IconData icon, String title, String value) {
+    return Card(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppTheme.primaryColor.withOpacity(0.1),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: AppTheme.primaryColor,
+                size: 24,
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller,
+      String label,
+      IconData icon, {
+        TextInputType? keyboardType,
+      }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+        filled: true,
+        fillColor: Colors.white,
+        labelStyle: TextStyle(color: Colors.grey[600]),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppTheme.errorColor),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppTheme.errorColor, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Mi Perfil"),
-        centerTitle: true,
-        backgroundColor: Color(0xFF013750),
-      ),
-      body: Center(
-        child: _isLoading
-            ? CircularProgressIndicator()
-            : _errorMessage != null
-            ? Text(_errorMessage!)
-            : SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: 600),
-            padding: const EdgeInsets.symmetric(
-                horizontal: 24.0, vertical: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                    _urlPerfilController.text.isNotEmpty
-                        ? _urlPerfilController.text
-                        : 'https://via.placeholder.com/150',
-                  ),
-                ),
-                SizedBox(height: 24),
-                Text(
-                  "${_nombreController.text} ${_apellidosController.text}",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  _correoController.text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 24),
-                if (_isEditing)
-                  _buildEditForm()
-                else
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF00988D),
-                          minimumSize: Size(200, 45),
-                        ),
-                        child: Text("Editar Perfil"),
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _navegarADirecciones,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF013750),
-                          minimumSize: Size(200, 45),
-                        ),
-                        child: Text("Direcciones"),
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _logout,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFF23E02),
-                          minimumSize: Size(200, 45),
-                        ),
-                        child: Text("Cerrar Sesión"),
-                      ),
-                    ],
-                  ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.primaryColor,
+                AppTheme.darkTurquoise,
               ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
+        ),
+        title: Text(
+          "Mi Perfil",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        actions: [
+          if (!_isEditing)
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () => setState(() => _isEditing = true),
+              color: Colors.white,
+            ),
+        ],
+      ),
+      body: _isLoading
+          ? Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+        ),
+      )
+          : _errorMessage != null
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppTheme.errorColor,
+            ),
+            SizedBox(height: 16),
+            Text(
+              _errorMessage!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppTheme.errorColor),
+            ),
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _loadProfile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+              ),
+              child: Text("Reintentar"),
+            ),
+          ],
+        ),
+      )
+          : SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.darkTurquoise,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  _buildProfileImage(),
+                  SizedBox(height: 16),
+                  if (!_isEditing) ...[
+                    Text(
+                      "${_nombreController.text} ${_apellidosController.text}",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      _correoController.text,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: _isEditing
+                  ? _buildEditForm()
+                  : Column(
+                children: [
+                  _buildInfoCard(
+                    Icons.phone,
+                    "Teléfono",
+                    _telefonoController.text,
+                  ),
+                  SizedBox(height: 12),
+                  _buildInfoCard(
+                    Icons.email,
+                    "Correo",
+                    _correoController.text,
+                  ),
+                  SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _navegarADirecciones,
+                    icon: Icon(Icons.location_on),
+                    label: Text("Mis Direcciones"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed: _logout,
+                    icon: Icon(Icons.logout),
+                    label: Text("Cerrar Sesión"),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.errorColor,
+                      side: BorderSide(
+                        color: AppTheme.errorColor,
+                      ),
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildEditForm() {
-    return Container(
-      constraints: BoxConstraints(maxWidth: 400),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextField(
-            controller: _nombreController,
-            decoration: InputDecoration(
-              labelText: "Nombre",
-              filled: true,
-              fillColor: Colors.white,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2C6B74)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00988D)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
-          TextField(
-            controller: _apellidosController,
-            decoration: InputDecoration(
-              labelText: "Apellidos",
-              filled: true,
-              fillColor: Colors.white,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2C6B74)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00988D)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
-          TextField(
-            controller: _correoController,
-            decoration: InputDecoration(
-              labelText: "Correo Electrónico",
-              filled: true,
-              fillColor: Colors.white,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2C6B74)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00988D)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            keyboardType: TextInputType.emailAddress,
-          ),
-          SizedBox(height: 16),
-          TextField(
-            controller: _telefonoController,
-            decoration: InputDecoration(
-              labelText: "Número de Teléfono",
-              filled: true,
-              fillColor: Colors.white,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2C6B74)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00988D)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            keyboardType: TextInputType.phone,
-          ),
-          SizedBox(height: 16),
-          TextField(
-            controller: _urlPerfilController,
-            decoration: InputDecoration(
-              labelText: "URL de Imagen de Perfil",
-              filled: true,
-              fillColor: Colors.white,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2C6B74)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00988D)),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ),
-          SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    _restoreOriginalData(); // Restauramos los datos originales
-                    setState(() {
-                      _isEditing = false;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    minimumSize: Size(0, 45),
-                  ),
-                  child: Text(
-                    "Cancelar",
-                    style: TextStyle(color: Colors.black87),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildTextField(
+          _nombreController,
+          "Nombre",
+          Icons.person,
+        ),
+        SizedBox(height: 16),
+        _buildTextField(
+          _apellidosController,
+          "Apellidos",
+          Icons.person_outline,
+        ),
+        SizedBox(height: 16),
+        _buildTextField(
+          _correoController,
+          "Correo Electrónico",
+          Icons.email,
+          keyboardType: TextInputType.emailAddress,
+        ),
+        SizedBox(height: 16),
+        _buildTextField(
+          _telefonoController,
+          "Número de Teléfono",
+          Icons.phone,
+          keyboardType: TextInputType.phone,
+        ),
+        SizedBox(height: 16),
+        _buildTextField(
+          _urlPerfilController,
+          "URL de Imagen de Perfil",
+          Icons.image,
+        ),
+        SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  _restoreOriginalData();
+                  setState(() => _isEditing = false);
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.grey[800],
+                  side: BorderSide(color: Colors.grey[400]!),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                child: Text("Cancelar"),
               ),
-              SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _updateProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF00988D),
-                    minimumSize: Size(0, 45),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _updateProfile,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.secondaryColor,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text("Guardar Cambios"),
                 ),
+                child: _isLoading
+                    ? SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 2,
+                  ),
+                )
+                    : Text("Guardar Cambios"),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

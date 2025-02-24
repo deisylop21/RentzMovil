@@ -3,6 +3,7 @@ import '../api/direccion_api.dart';
 import '../models/direccion_model.dart';
 import 'package:provider/provider.dart';
 import '../models/auth_model.dart';
+import '../theme/app_theme.dart';
 
 class EditarDireccionPage extends StatefulWidget {
   final Direccion direccion;
@@ -23,6 +24,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
   late TextEditingController referenciaController;
   late TextEditingController numeroContactoController;
   bool direccionPrioritaria = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -49,84 +51,271 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
     super.dispose();
   }
 
-  void _guardarCambios() async {
+  Future<void> _guardarCambios() async {
     if (_formKey.currentState!.validate()) {
-      final authModel = Provider.of<AuthModel>(context, listen: false);
-      final nuevaDireccion = Direccion(
-        id: widget.direccion.id,
-        calle: calleController.text,
-        numeroExterior: numeroExteriorController.text,
-        numeroInterior: numeroInteriorController.text.isEmpty ? null : numeroInteriorController.text,
-        codigoPostal: codigoPostalController.text,
-        colonia: coloniaController.text,
-        referencia: referenciaController.text.isEmpty ? null : referenciaController.text,
-        numeroContacto: numeroContactoController.text,
-        direccionPrioritaria: direccionPrioritaria,
-      );
+      setState(() {
+        _isLoading = true;
+      });
 
-      await DireccionesApi().updateDireccion(authModel.token ?? "", widget.direccion.id!, nuevaDireccion);
-      Navigator.pop(context, nuevaDireccion);
+      try {
+        final authModel = Provider.of<AuthModel>(context, listen: false);
+        final nuevaDireccion = Direccion(
+          id: widget.direccion.id,
+          calle: calleController.text,
+          numeroExterior: numeroExteriorController.text,
+          numeroInterior: numeroInteriorController.text.isEmpty ? null : numeroInteriorController.text,
+          codigoPostal: codigoPostalController.text,
+          colonia: coloniaController.text,
+          referencia: referenciaController.text.isEmpty ? null : referenciaController.text,
+          numeroContacto: numeroContactoController.text,
+          direccionPrioritaria: direccionPrioritaria,
+        );
+
+        await DireccionesApi().updateDireccion(authModel.token ?? "", widget.direccion.id!, nuevaDireccion);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Dirección actualizada correctamente"),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+        Navigator.pop(context, true);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error al actualizar la dirección: ${e.toString()}"),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  Widget _buildFormField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+    bool isOptional = false,
+    TextInputType? keyboardType,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+          suffixIcon: isOptional
+              ? Tooltip(
+            message: "Campo opcional",
+            child: Icon(
+              Icons.info_outline,
+              color: Colors.grey,
+              size: 20,
+            ),
+          )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.2)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.2)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        validator: validator,
+        keyboardType: keyboardType,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Editar Dirección")),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: calleController,
-                decoration: InputDecoration(labelText: "Calle"),
-                validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
-              ),
-              TextFormField(
-                controller: numeroExteriorController,
-                decoration: InputDecoration(labelText: "Número Exterior"),
-                validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
-              ),
-              TextFormField(
-                controller: numeroInteriorController,
-                decoration: InputDecoration(labelText: "Número Interior (Opcional)"),
-              ),
-              TextFormField(
-                controller: codigoPostalController,
-                decoration: InputDecoration(labelText: "Código Postal"),
-                validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
-              ),
-              TextFormField(
-                controller: coloniaController,
-                decoration: InputDecoration(labelText: "Colonia"),
-                validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
-              ),
-              TextFormField(
-                controller: referenciaController,
-                decoration: InputDecoration(labelText: "Referencia (Opcional)"),
-              ),
-              TextFormField(
-                controller: numeroContactoController,
-                decoration: InputDecoration(labelText: "Número de Contacto"),
-                validator: (value) => value!.isEmpty ? "Este campo es obligatorio" : null,
-              ),
-              SwitchListTile(
-                title: Text("Dirección Prioritaria"),
-                value: direccionPrioritaria,
-                onChanged: (value) {
-                  setState(() {
-                    direccionPrioritaria = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _guardarCambios,
-                child: Text("Guardar Cambios"),
-              ),
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.primaryColor,
+                AppTheme.darkTurquoise,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: Text(
+          "Editar Dirección",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.grey[50]!,
+              Colors.white,
             ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        _buildFormField(
+                          controller: calleController,
+                          label: "Calle",
+                          icon: Icons.add_road,
+                          validator: (value) => value!.isEmpty ? "Ingrese la calle" : null,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildFormField(
+                                controller: numeroExteriorController,
+                                label: "Número Exterior",
+                                icon: Icons.home_outlined,
+                                validator: (value) =>
+                                value!.isEmpty ? "Ingrese el número exterior" : null,
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: _buildFormField(
+                                controller: numeroInteriorController,
+                                label: "Número Interior",
+                                icon: Icons.apartment_outlined,
+                                isOptional: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        _buildFormField(
+                          controller: codigoPostalController,
+                          label: "Código Postal",
+                          icon: Icons.local_post_office_outlined,
+                          validator: (value) =>
+                          value!.isEmpty ? "Ingrese el código postal" : null,
+                          keyboardType: TextInputType.number,
+                        ),
+                        _buildFormField(
+                          controller: coloniaController,
+                          label: "Colonia",
+                          icon: Icons.location_city_outlined,
+                          validator: (value) =>
+                          value!.isEmpty ? "Ingrese la colonia" : null,
+                        ),
+                        _buildFormField(
+                          controller: referenciaController,
+                          label: "Referencia",
+                          icon: Icons.info_outline,
+                          isOptional: true,
+                        ),
+                        _buildFormField(
+                          controller: numeroContactoController,
+                          label: "Número de Contacto",
+                          icon: Icons.phone_outlined,
+                          validator: (value) =>
+                          value!.isEmpty ? "Ingrese el número de contacto" : null,
+                          keyboardType: TextInputType.phone,
+                        ),
+                        SwitchListTile(
+                          title: Text(
+                            "Dirección Prioritaria",
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "Esta será tu dirección principal",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          value: direccionPrioritaria,
+                          onChanged: (value) {
+                            setState(() {
+                              direccionPrioritaria = value;
+                            });
+                          },
+                          activeColor: AppTheme.secondaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _guardarCambios,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: _isLoading
+                      ? SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : Text(
+                    "Guardar Cambios",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -15,6 +15,7 @@ class RentaFormPage extends StatefulWidget {
 class _RentaFormPageState extends State<RentaFormPage> {
   late CartItem item;
   DateTime? fechaInicio;
+  DateTime? fechaFinal;
   late double total;
   List<Direccion> direcciones = []; // Lista de direcciones
   Direccion? direccionSeleccionada; // Dirección seleccionada
@@ -66,7 +67,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
     }
 
     final authModel = Provider.of<AuthModel>(context, listen: false);
-    final fechaFinal = fechaInicio!.add(Duration(days: 2)); // +2 días
+    final fechaFinal = fechaInicio!.add(Duration(days: 3)); // +3 días
 
     final renta = Renta2(
       idProducto: item.idProducto,
@@ -135,10 +136,13 @@ class _RentaFormPageState extends State<RentaFormPage> {
                 if (pickedDate != null) {
                   setState(() {
                     fechaInicio = pickedDate;
+                    fechaFinal = pickedDate.add(Duration(days: 3));
                   });
                 }
               },
-              child: Text(fechaInicio == null ? "Seleccionar Fecha de Inicio" : "Fecha: ${fechaInicio!.toLocal()}"),
+              child: Text(fechaInicio == null
+                  ? "Seleccionar Fecha de Inicio"
+                  : "Inicio: ${fechaInicio!.toLocal().toString().split(' ')[0]} \nFin: ${fechaFinal!.toLocal().toString().split(' ')[0]}"),
             ),
             SizedBox(height: 20),
             ElevatedButton(

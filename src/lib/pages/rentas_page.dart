@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../api/rentas_api.dart';
 import '../models/renta_model.dart';
 import '../models/auth_model.dart';
+import '../theme/app_theme.dart';
 import 'renta_detail_page.dart';
 
 class RentasPage extends StatefulWidget {
@@ -32,40 +33,253 @@ class _RentasPageState extends State<RentasPage> {
     }
   }
 
+  Widget _buildRentaCard(Renta renta) {
+    double totalAsDouble = double.tryParse(renta.total) ?? 0.0;
+
+
+    // Imprimir la URL en consola
+    print("Cargando imagen: ${renta.urlImagenPrincipal}");
+
+    // Validar si la URL no está vacía y comienza con http/https
+    bool isValidUrl = renta.urlImagenPrincipal.isNotEmpty &&
+        (renta.urlImagenPrincipal.startsWith("http://") ||
+            renta.urlImagenPrincipal.startsWith("https://"));
+
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RentaDetailPage(idRenta: renta.idRentaProducto),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Mostrar imagen del producto
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: renta.urlImagenPrincipal.isNotEmpty
+                        ? Image.network(
+                      renta.urlImagenPrincipal,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+                    )
+                        : Icon(Icons.image, size: 80, color: Colors.grey),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          renta.nombreProducto,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Estado: ${renta.estado}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Divider(),
+              SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Total:",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    "\$${totalAsDouble.toStringAsFixed(2)}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.secondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildErrorState(String error) {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.all(20),
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppTheme.errorColor,
+            ),
+            SizedBox(height: 16),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[800],
+                height: 1.5,
+              ),
+            ),
+            SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _loadRentas,
+              icon: Icon(Icons.refresh),
+              label: Text("Reintentar"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.shopping_bag_outlined,
+              size: 64,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+          SizedBox(height: 24),
+          Text(
+            "No tienes rentas registradas",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            "Tus rentas aparecerán aquí",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pushNamed(context, '/products');
+            },
+            icon: Icon(Icons.add_shopping_cart),
+            label: Text("Explorar productos"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.secondaryColor,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
-        child: Container(
+      appBar: AppBar(
+        flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF00988D), Color(0xFF2C6B74)],
+              colors: [
+                AppTheme.primaryColor,
+                AppTheme.darkTurquoise,
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
-          child: AppBar(
-            title: Text(
-              'Mis Rentas',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                shadows: [
-                  Shadow(
-                    offset: Offset(1, 1),
-                    blurRadius: 2,
-                    color: Colors.black.withOpacity(0.3),
-                  ),
-                ],
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
+        ),
+        title: Text(
+          'Mis Rentas',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
           ),
         ),
+        centerTitle: true,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _loadRentas,
+            color: Colors.white,
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -73,8 +287,8 @@ class _RentasPageState extends State<RentasPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFFEF5C8),
-              Color(0xFFF23E02).withOpacity(0.2),
+              Colors.grey[50]!,
+              Colors.white,
             ],
           ),
         ),
@@ -84,134 +298,19 @@ class _RentasPageState extends State<RentasPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00988D)),
-                  strokeWidth: 6,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                 ),
               );
             } else if (snapshot.hasError) {
-              return Center(
-                child: Card(
-                  margin: EdgeInsets.all(20),
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 60,
-                          color: Colors.red,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          snapshot.error.toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: _loadRentas,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF00988D),
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            "Reintentar",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              return _buildErrorState(snapshot.error.toString());
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/no_data.png', // Agrega una imagen aquí
-                      width: 150,
-                      height: 150,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "No tienes rentas registradas",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF013750),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return _buildEmptyState();
             } else {
-              final rentas = snapshot.data!;
               return ListView.builder(
-                itemCount: rentas.length,
+                padding: EdgeInsets.symmetric(vertical: 16),
+                itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
-                  final renta = rentas[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ListTile(
-                      tileColor: Colors.white,
-                      title: Text(
-                        renta.nombreProducto,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF013750),
-                        ),
-                      ),
-                      subtitle: Text(
-                        "Estado: ${renta.estado} - Total: \$${renta.total}",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF2C6B74),
-                        ),
-                      ),
-                      leading: CircleAvatar(
-                        backgroundColor: Color(0xFF00988D),
-                        child: Icon(
-                          Icons.shopping_bag,
-                          color: Colors.white,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color(0xFF00988D),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                RentaDetailPage(idRenta: renta.idRentaProducto),
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                  return _buildRentaCard(snapshot.data![index]);
                 },
               );
             }
