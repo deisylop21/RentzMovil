@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   String? _error;
   late ScrollController _scrollController;
   bool _showScrollToTop = false;
+  String? _selectedCategory;
+  final _filterScrollController = ScrollController();
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   void dispose() {
     _scrollController.dispose();
+    _filterScrollController.dispose();
     super.dispose();
   }
 
@@ -155,66 +158,102 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
   }
-  Widget _buildPromotionCard(String title, String subtitle, Color color, IconData icon) {
+  Widget _buildAnimatedCategoryFilters() {
     return Container(
-      width: 200,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            color,
-            color.withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 32,
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      height: 60,
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        controller: _filterScrollController,
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _categorizedProducts.length + 1, // +1 for "Todos" option
+        itemBuilder: (context, index) {
+          final isAllCategory = index == 0;
+          final category = isAllCategory ? "Todos" : _categorizedProducts.keys.elementAt(index - 1);
+          final isSelected = isAllCategory ? _selectedCategory == null : category == _selectedCategory;
+
+          return Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategory = isAllCategory ? null : category;
+                      // Filter products based on selection
+                      if (!isAllCategory) {
+                        _categorizedProducts = _groupByCategory(
+                          _products.where((product) =>
+                          product.categoria == category
+                          ).toList(),
+                        );
+                      } else {
+                        _categorizedProducts = _groupByCategory(_products);
+                      }
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(25),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppTheme.primaryColor
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : Colors.grey[300]!,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withOpacity(0.4),
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        )
+                      ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isAllCategory
+                              ? Icons.apps
+                              : _getCategoryIcon(category),
+                          size: 20,
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          category,
+                          style: TextStyle(
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.grey[600],
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 12,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
-
   Widget _buildLoadingShimmer() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -396,6 +435,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         child: Column(
           children: [
             if (authModel.isAuthenticated) _buildWelcomeHeader(authModel),
+            _buildAnimatedCategoryFilters(),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _fetchProducts,
