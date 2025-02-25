@@ -229,7 +229,7 @@ class _RentasPageState extends State<RentasPage> {
           SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.pushNamed(context, '/products');
+              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
             },
             icon: Icon(Icons.add_shopping_cart),
             label: Text("Explorar productos"),

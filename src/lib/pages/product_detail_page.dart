@@ -21,7 +21,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   bool isLoading = false;
   final CartApi cartApi = CartApi();
   final PageController _pageController = PageController();
-  int _currentPage = 0;
+
 
   @override
   void dispose() {
@@ -36,11 +36,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           height: 350,
           child: PageView.builder(
             controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
+
             itemCount: product.imagenes.isNotEmpty
                 ? product.imagenes.length + 1
                 : 1,
@@ -108,15 +104,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Color(0xFF00345E),
         elevation: 0,
-        backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.share_outlined, color: Colors.black87),
+            icon: Icon(Icons.share_outlined, color: Colors.white),
             onPressed: () {
               // Implementar compartir
             },
