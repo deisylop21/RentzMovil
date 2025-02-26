@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/direccion_model.dart';
 
 class DireccionesApi {
-  final String baseUrl = "https://darkred-donkey-427653.hostingersite.com/api/v1";
+  final String baseUrl = "https://rentzmx.com/api/api/v1";
 
   // Obtener direcciones
   Future<List<Direccion>> fetchDirecciones(String token) async {

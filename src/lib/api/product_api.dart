@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 
 class ProductApi {
-  final String baseUrl = "https://darkred-donkey-427653.hostingersite.com/api/v1";
+  final String baseUrl = "https://rentzmx.com/api/api/v1";
 
   // Obtener todos los productos
   Future<List<Product>> fetchProducts() async {

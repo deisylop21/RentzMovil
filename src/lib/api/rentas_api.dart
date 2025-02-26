@@ -4,7 +4,7 @@ import '../models/renta_model.dart';
 import '../models/renta2_model.dart';
 
 class RentasApi {
-  final String baseUrl = 'https://darkred-donkey-427653.hostingersite.com/api/v1/rentas';
+  final String baseUrl = 'https://rentzmx.com/api/api/v1/rentas';
 
   Future<List<Renta>> fetchRentas(String token) async {
     final response = await http.get(

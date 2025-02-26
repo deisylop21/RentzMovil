@@ -5,7 +5,7 @@ import '../models/user_model.dart';
 import '../models/profile_model.dart';
 
 class AuthApi {
-  final String baseUrl = "https://darkred-donkey-427653.hostingersite.com/api/v1";
+  final String baseUrl = "https://rentzmx.com/api/api/v1";
 
   // Función para login
   Future<Map<String, dynamic>> login(String correo, String password) async {
