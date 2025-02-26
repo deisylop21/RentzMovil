@@ -26,7 +26,7 @@ class DireccionesApi {
 
   // Agregar nueva dirección
   Future<void> addDireccion(String token, Direccion direccion) async {
-    final url = Uri.parse("https://darkred-donkey-427653.hostingersite.com/api/v1/direcciones");
+    final url = Uri.parse("$baseUrl/direcciones");
 
     final Map<String, dynamic> data = {
       "Calle": direccion.calle,
@@ -75,7 +75,7 @@ class DireccionesApi {
 
   // Eliminar dirección
   Future<void> deleteDireccion(String token, int id) async {
-    final url = Uri.parse("https://darkred-donkey-427653.hostingersite.com/api/v1/direcciones/$id");
+    final url = Uri.parse("$baseUrl/direcciones/$id");
 
     try {
       final response = await http.delete(
