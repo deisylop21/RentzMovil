@@ -57,7 +57,7 @@ class Direccion {
       "Colonia": colonia,
       "Referencia": referencia,
       "Numero_contacto": numeroContacto,
-      "Direccion_Prioritaria": direccionPrioritaria ? 1 : 0,
+      "Direccion_Prioritaria": direccionPrioritaria, // Enviar como booleano
     };
   }
 }

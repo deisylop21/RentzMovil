@@ -149,15 +149,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ],
                 ),
               ),
-
             ],
           ),
           SizedBox(height: 16),
-
         ],
       ),
     );
   }
+
   Widget _buildAnimatedCategoryFilters() {
     return Container(
       height: 60,
@@ -254,6 +253,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
   }
+
   Widget _buildLoadingShimmer() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -283,7 +283,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         children: List.generate(3, (index) =>
                             Container(
                               width: 160,
-                              height: 200,
+                              height: 250, // Actualizado para coincidir con la altura de las tarjetas
                               margin: EdgeInsets.only(right: 16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -345,8 +345,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-
-
                     ],
                   ),
                 ),
@@ -354,27 +352,24 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             ),
           ),
           Container(
-            height: 280,
+            height: 280, // Altura fija para el contenedor
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 8),
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Hero(
-                    tag: 'product-${product.idProducto}',
-                    child: ProductCard(
-                      product: product,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/product-detail',
-                          arguments: product.idProducto,
-                        );
-                      },
-                    ),
+                return Hero(
+                  tag: 'product-${product.idProducto}',
+                  child: ProductCard(
+                    product: product,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/product-detail',
+                        arguments: product.idProducto,
+                      );
+                    },
                   ),
                 );
               },

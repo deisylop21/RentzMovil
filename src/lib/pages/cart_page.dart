@@ -16,19 +16,26 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    final authModel = Provider.of<AuthModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authModel = Provider.of<AuthModel>(context, listen: false);
 
-    if (authModel.token == null) {
-      _isAuthenticated = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Debes iniciar sesión para usar el carrito")),
-        );
-        Navigator.pop(context);
-      });
-    } else {
-      _cartFuture = CartApi().fetchCart(authModel.token!);
-    }
+
+      if (authModel.token == null) {
+        setState(() {
+          _isAuthenticated = false;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Debes iniciar sesión para usar el carrito")),
+          );
+          Navigator.pop(context);
+        });
+      } else {
+        setState(() {
+          _cartFuture = CartApi().fetchCart(authModel.token!);
+        });
+      }
+    });
   }
 
   Future<void> _refreshCart() async {
@@ -57,31 +64,35 @@ class _CartPageState extends State<CartPage> {
           ),
         ],
       ),
-      body: FutureBuilder<List<CartItem>>(
-        future: _cartFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("El carrito está vacío"));
-          } else {
-            final cartItems = snapshot.data!;
-            return ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return _buildCartItem(context, item);
-              },
-            );
-          }
-        },
-      ),
+        body: FutureBuilder<List<CartItem>>(
+          future: _cartFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text("El carrito está vacío"));
+            } else {
+              final cartItems = snapshot.data!;
+              return ListView.builder(
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartItems[index];
+                  return _buildCartItem(context, item);
+                },
+              );
+            }
+          },
+        ),
     );
   }
 
   Widget _buildCartItem(BuildContext context, CartItem item) {
+    if (item == null) {
+      return Center(child: Text("Error: Item no válido"));
+    }
+
     return Card(
       margin: EdgeInsets.all(8),
       child: Column(
@@ -174,6 +185,9 @@ class _CartPageState extends State<CartPage> {
 
     try {
       final authModel = Provider.of<AuthModel>(context, listen: false);
+      if (authModel.token == null) {
+        throw Exception("Token de autenticación no disponible");
+      }
       await CartApi().updateCartItem(authModel.token!, idCarrito, newQuantity);
       _refreshCart();
     } catch (e) {
@@ -186,6 +200,9 @@ class _CartPageState extends State<CartPage> {
   Future<void> _deleteItem(int idCarrito) async {
     try {
       final authModel = Provider.of<AuthModel>(context, listen: false);
+      if (authModel.token == null) {
+        throw Exception("Token de autenticación no disponible");
+      }
       await CartApi().deleteCartItem(authModel.token!, idCarrito);
       _refreshCart();
     } catch (e) {
@@ -194,4 +211,5 @@ class _CartPageState extends State<CartPage> {
       );
     }
   }
+
 }

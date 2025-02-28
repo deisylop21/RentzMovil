@@ -28,17 +28,17 @@ class CartItem {
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
-      idCarrito: json['Id_carrito'],
-      idUsuario: json['Id_usuario'],
-      idProducto: json['Id_producto'],
-      cantidad: json['cantidad'],
-      total: json['total'],
-      nombreProducto: json['nombre_producto'],
-      precio: json['precio'],
+      idCarrito: json['Id_carrito'] ?? 0, // Valor predeterminado si es null
+      idUsuario: json['Id_usuario'] ?? 0,
+      idProducto: json['Id_producto'] ?? 0,
+      cantidad: json['cantidad'] ?? 0,
+      total: json['total'] ?? '0.00',
+      nombreProducto: json['nombre_producto'] ?? '',
+      precio: json['precio'] ?? '0.00',
       esPromocion: json['es_promocion'] == 1,
       precioPromocion: json['precio_promocion'],
-      descripcion: json['descripcion'],
-      urlImagenPrincipal: json['url_imagenprincipal'],
+      descripcion: json['descripcion'] ?? '',
+      urlImagenPrincipal: json['url_imagenprincipal'] ?? '',
     );
   }
 }
