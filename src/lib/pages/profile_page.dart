@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:provider/provider.dart';
 import '../api/auth_api.dart';
 import '../models/auth_model.dart';
@@ -16,7 +20,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _apellidosController = TextEditingController();
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _telefonoController = TextEditingController();
-  final TextEditingController _urlPerfilController = TextEditingController();
 
   // Variables para almacenar los datos originales
   String _originalNombre = '';
@@ -28,6 +31,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = false;
   bool _isEditing = false;
   String? _errorMessage;
+
+  File? _selectedImage; // Para almacenar la imagen seleccionada
 
   @override
   void initState() {
@@ -57,7 +62,6 @@ class _ProfilePageState extends State<ProfilePage> {
       _apellidosController.text = profile.apellidos;
       _correoController.text = profile.correo;
       _telefonoController.text = profile.numeroTelefono;
-      _urlPerfilController.text = profile.urlPerfil;
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
@@ -69,13 +73,11 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Método para restaurar los datos originales
   void _restoreOriginalData() {
     _nombreController.text = _originalNombre;
     _apellidosController.text = _originalApellidos;
     _correoController.text = _originalCorreo;
     _telefonoController.text = _originalTelefono;
-    _urlPerfilController.text = _originalUrlPerfil;
   }
 
   Future<void> _updateProfile() async {
@@ -91,7 +93,6 @@ class _ProfilePageState extends State<ProfilePage> {
         "apellidos": _apellidosController.text.trim(),
         "correo": _correoController.text.trim(),
         "numero_telefono": _telefonoController.text.trim(),
-        "url_perfil": _urlPerfilController.text.trim(),
       };
 
       await AuthApi().updateProfile(authModel.token!, profileData);
@@ -101,7 +102,6 @@ class _ProfilePageState extends State<ProfilePage> {
       _originalApellidos = _apellidosController.text.trim();
       _originalCorreo = _correoController.text.trim();
       _originalTelefono = _telefonoController.text.trim();
-      _originalUrlPerfil = _urlPerfilController.text.trim();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Perfil actualizado exitosamente")),
@@ -128,11 +128,53 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _navegarADirecciones() async {
-    final authModel = Provider.of<AuthModel>(context, listen: false);
     Navigator.pushNamed(context, '/direcciones');
   }
 
-  @override
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+
+      // Subir la imagen al servidor
+      await _uploadImage(_selectedImage!);
+    }
+  }
+
+  Future<void> _uploadImage(File image) async {
+    final authModel = Provider.of<AuthModel>(context, listen: false);
+    final url = Uri.parse('https://rentzmx.com/api/api/v1/cliente/perfil/imagen');
+    final request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer ${authModel.token}'
+      ..files.add(await http.MultipartFile.fromPath('imagen', image.path));
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(await response.stream.bytesToString());
+        setState(() {
+          _originalUrlPerfil = responseData['url'];
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Imagen actualizada exitosamente")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error al subir la imagen")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
   Widget _buildProfileImage() {
     return Stack(
       children: [
@@ -154,14 +196,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child: CircleAvatar(
             radius: 60,
             backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-            backgroundImage: NetworkImage(
-              _urlPerfilController.text.isNotEmpty
-                  ? _urlPerfilController.text
-                  : 'https://via.placeholder.com/150',
-            ),
+            backgroundImage: _selectedImage != null
+                ? FileImage(_selectedImage!)
+                : NetworkImage(_originalUrlPerfil.isNotEmpty
+                ? _originalUrlPerfil
+                : 'https://via.placeholder.com/150') as ImageProvider,
             onBackgroundImageError: (_, __) {
               setState(() {
-                _urlPerfilController.text = '';
+                _originalUrlPerfil = '';
               });
             },
           ),
@@ -170,17 +212,48 @@ class _ProfilePageState extends State<ProfilePage> {
           Positioned(
             right: 0,
             bottom: 0,
-            child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: AppTheme.secondaryColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 20,
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text("Cambiar Imagen de Perfil"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.photo_library),
+                          title: Text("Subir Foto"),
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await _pickImage(ImageSource.gallery);
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.camera_alt),
+                          title: Text("Tomar Foto"),
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await _pickImage(ImageSource.camera);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppTheme.secondaryColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -316,7 +389,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: _isLoading
           ? Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+          valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
         ),
       )
           : _errorMessage != null
@@ -485,12 +558,6 @@ class _ProfilePageState extends State<ProfilePage> {
           Icons.phone,
           keyboardType: TextInputType.phone,
         ),
-        SizedBox(height: 16),
-        _buildTextField(
-          _urlPerfilController,
-          "URL de Imagen de Perfil",
-          Icons.image,
-        ),
         SizedBox(height: 24),
         Row(
           children: [
@@ -528,7 +595,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation(Colors.white),
                     strokeWidth: 2,
                   ),
                 )
