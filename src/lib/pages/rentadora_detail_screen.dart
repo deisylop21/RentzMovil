@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../api/rentadora_api.dart';
+import '../api/product_api.dart';
 import '../models/rentadora_model.dart';
+import '../models/product_model.dart';
 import '../theme/app_theme.dart';
 import '../widgets/product_card.dart';
 import '../widgets/loading_shimmer.dart';
 import '../widgets/error_state.dart';
+import 'product_detail_page.dart';
 
 class RentadoraDetailScreen extends StatefulWidget {
   final int idRentadora;
@@ -23,6 +26,7 @@ class RentadoraDetailScreen extends StatefulWidget {
 
 class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
   final RentadoraApi _rentadoraApi = RentadoraApi();
+  final ProductApi _productApi = ProductApi();
   bool _isLoading = true;
   String? _error;
   Rentadora? _rentadoraDetail;
@@ -346,7 +350,27 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
         delegate: SliverChildBuilderDelegate(
               (context, index) {
             final producto = productos[index];
-            return _buildProductCard(producto);
+            // Convertir ProductoRentadora a Product
+            final product = Product(
+              idProducto: producto.idProducto,
+              nombreProducto: producto.nombreProducto,
+              categoria: producto.categoria,
+              cantidadActual: producto.cantidadActual,
+              precio: producto.precio,
+              descripcion: producto.descripcion,
+              material: producto.material,
+              urlImagenPrincipal: producto.urlImagenPrincipal,
+              esPromocion: producto.esPromocion == 1,
+              precioPromocion: producto.precioPromocion,
+              imagenes: [], // Aquí puedes agregar las imágenes si las tienes
+            );
+
+            return ProductCard(
+              product: product,
+              onTap: () {
+                _navigateToProductDetail(product);
+              },
+            );
           },
           childCount: productos.length,
         ),
@@ -354,138 +378,46 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
     );
   }
 
-  Widget _buildProductCard(ProductoRentadora producto) {
-    final bool hasPromotion = producto.esPromocion == 1 && producto.precioPromocion != null;
+  Future _navigateToProductDetail(Product product) async {
+    try {
+      // Mostrar indicador de carga
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
+            ),
+          );
+        },
+      );
 
-    return GestureDetector(
-      onTap: () {
-        // Aquí puedes navegar al detalle del producto si es necesario
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+      // Obtener los detalles del producto
+      final productDetails = await _productApi.fetchProductDetails(product.idProducto);
+
+      // Cerrar el indicador de carga
+      Navigator.of(context, rootNavigator: true).pop();
+
+      // Navegar a la página de detalles
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetailPage(productId: productDetails.idProducto),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Imagen del producto
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                  ),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: CachedNetworkImage(
-                      imageUrl: producto.urlImagenPrincipal,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[200],
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.image_not_supported),
-                      ),
-                    ),
-                  ),
-                ),
-                if (hasPromotion)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Oferta',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    producto.nombreProducto,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    producto.categoria,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  if (hasPromotion)
-                    Row(
-                      children: [
-                        Text(
-                          '\$${producto.precio}',
-                          style: TextStyle(
-                            decoration: TextDecoration.lineThrough,
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '\$${producto.precioPromocion}',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    )
-                  else
-                    Text(
-                      '\$${producto.precio}',
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
+      );
+    } catch (e) {
+      // Cerrar el indicador de carga en caso de error
+      Navigator.of(context, rootNavigator: true).pop();
+
+      // Mostrar mensaje de error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar los detalles del producto: $e'),
+          backgroundColor: Colors.red,
         ),
-      ),
-    );
+      );
+      print('Error al cargar los detalles del producto: $e');
+    }
   }
 }
