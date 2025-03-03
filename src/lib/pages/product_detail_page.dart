@@ -40,6 +40,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     setState(() => _isSharing = true);
 
     try {
+      // Crear el deep link
+      final productUrl = 'https://rentzmx.com/producto/${product.idProducto}';
+
       final shareText = '''
 ¡Mira este increíble producto en Rentz!
 
@@ -49,6 +52,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 🛠️ Material: ${product.material}
 💰 Precio: \$${product.precio}${product.esPromocion ? '\n🔥 ¡En promoción!: \$${product.precioPromocion}' : ''}
 📦 Cantidad disponible: ${product.cantidadActual}
+
+Ver producto: $productUrl
 
 ¡Renta sin estrés con Rentz!
 ''';
