@@ -12,37 +12,42 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   late Future<List<CartItem>> _cartFuture;
   bool _isAuthenticated = true;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authModel = Provider.of<AuthModel>(context, listen: false);
+    _initializeCart();
+  }
 
+  Future<void> _initializeCart() async {
+    final authModel = Provider.of<AuthModel>(context, listen: false);
 
-      if (authModel.token == null) {
-        setState(() {
-          _isAuthenticated = false;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Debes iniciar sesión para usar el carrito")),
-          );
-          Navigator.pop(context);
-        });
-      } else {
-        setState(() {
-          _cartFuture = CartApi().fetchCart(authModel.token!);
-        });
-      }
-    });
+    if (authModel.token == null) {
+      setState(() {
+        _isAuthenticated = false;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Debes iniciar sesión para usar el carrito")),
+        );
+        Navigator.pop(context);
+      });
+    } else {
+      setState(() {
+        _cartFuture = CartApi().fetchCart(authModel.token!);
+        _isInitialized = true;
+      });
+    }
   }
 
   Future<void> _refreshCart() async {
     final authModel = Provider.of<AuthModel>(context, listen: false);
-    setState(() {
-      _cartFuture = CartApi().fetchCart(authModel.token!);
-    });
+    if (authModel.token != null) {
+      setState(() {
+        _cartFuture = CartApi().fetchCart(authModel.token!);
+      });
+    }
   }
 
   @override
@@ -51,6 +56,13 @@ class _CartPageState extends State<CartPage> {
       return Scaffold(
         appBar: AppBar(title: Text("Carrito de Compras")),
         body: Center(child: Text("Debes iniciar sesión para ver el carrito")),
+      );
+    }
+
+    if (!_isInitialized) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Carrito de Compras")),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -64,48 +76,73 @@ class _CartPageState extends State<CartPage> {
           ),
         ],
       ),
-        body: FutureBuilder<List<CartItem>>(
-          future: _cartFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text("El carrito está vacío"));
-            } else {
-              final cartItems = snapshot.data!;
-              return ListView.builder(
-                itemCount: cartItems.length,
-                itemBuilder: (context, index) {
-                  final item = cartItems[index];
-                  return _buildCartItem(context, item);
-                },
-              );
-            }
-          },
-        ),
+      body: FutureBuilder<List<CartItem>>(
+        future: _cartFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Error: ${snapshot.error}"),
+                  ElevatedButton(
+                    onPressed: _refreshCart,
+                    child: Text("Reintentar"),
+                  ),
+                ],
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("El carrito está vacío"),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pushNamed(context, '/products'),
+                    child: Text("Ver productos"),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final item = snapshot.data![index];
+              return _buildCartItem(context, item);
+            },
+          );
+        },
+      ),
     );
   }
 
   Widget _buildCartItem(BuildContext context, CartItem item) {
-    if (item == null) {
-      return Center(child: Text("Error: Item no válido"));
-    }
-
     return Card(
       margin: EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            item.urlImagenPrincipal,
-            fit: BoxFit.cover,
-            height: 150,
-            width: double.infinity,
-            errorBuilder: (context, error, stackTrace) {
-              return Center(child: Icon(Icons.image_not_supported));
-            },
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+            child: Image.network(
+              item.urlImagenPrincipal,
+              fit: BoxFit.cover,
+              height: 150,
+              width: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 150,
+                  color: Colors.grey[200],
+                  child: Icon(Icons.image_not_supported, size: 50),
+                );
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -130,15 +167,13 @@ class _CartPageState extends State<CartPage> {
                       children: [
                         IconButton(
                           icon: Icon(Icons.remove),
-                          onPressed: () {
-                            _updateQuantity(item.idCarrito, item.cantidad - 1);
-                          },
+                          onPressed: item.cantidad > 1
+                              ? () => _updateQuantity(item.idCarrito, item.cantidad - 1)
+                              : null,
                         ),
                         IconButton(
                           icon: Icon(Icons.add),
-                          onPressed: () {
-                            _updateQuantity(item.idCarrito, item.cantidad + 1);
-                          },
+                          onPressed: () => _updateQuantity(item.idCarrito, item.cantidad + 1),
                         ),
                       ],
                     ),
@@ -147,15 +182,30 @@ class _CartPageState extends State<CartPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Total: \$${item.total}",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (item.esPromocion && item.precioPromocion != null)
+                          Text(
+                            "Precio original: \$${item.precio}",
+                            style: TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        Text(
+                          "Total: \$${item.total}",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: item.esPromocion ? Colors.green : Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                     IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        _deleteItem(item.idCarrito);
-                      },
+                      onPressed: () => _deleteItem(item.idCarrito),
                     ),
                   ],
                 ),
@@ -163,12 +213,14 @@ class _CartPageState extends State<CartPage> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(
-                        context,
+                      Navigator.of(context).pushNamed(
                         '/renta-form',
-                        arguments: item, // Enviar el objeto completo
+                        arguments: item, // Donde item es un CartItem válido
                       );
                     },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(200, 45),
+                    ),
                     child: Text("Rentar"),
                   ),
                 ),

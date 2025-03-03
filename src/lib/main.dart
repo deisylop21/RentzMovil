@@ -11,6 +11,7 @@ import 'theme/app_theme.dart';
 import 'pages/profile_page.dart';
 import 'pages/renta_form_page.dart';
 import 'pages/direcciones_page.dart';
+import 'models/cart_model.dart'; // Asegúrate de importar el modelo CartItem
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,31 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         print('Recibiendo ruta: ${settings.name}'); // Debug log
 
+        // Manejo especial para RentaFormPage
+        if (settings.name == '/renta-form') {
+          final args = settings.arguments;
+          if (args is CartItem) {
+            return MaterialPageRoute(
+              builder: (context) => RentaFormPage(cartItem: args),
+              settings: settings,
+            );
+          } else {
+            // Si no hay argumentos válidos, regresar al carrito
+            return MaterialPageRoute(
+              builder: (context) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Error: No se proporcionó un producto válido"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return CartPage();
+              },
+            );
+          }
+        }
+
+        // Manejo de deep linking y rutas dinámicas
         if (settings.name != null) {
           try {
             final uri = Uri.parse(settings.name!);
@@ -86,29 +112,65 @@ class MyApp extends StatelessWidget {
           }
         }
 
-        // Rutas normales
+        // Rutas normales con manejo de argumentos
         switch (settings.name) {
           case '/home':
-            return MaterialPageRoute(builder: (_) => HomePage());
-          case '/login':
-            return MaterialPageRoute(builder: (_) => LoginPage());
-          case '/register':
-            return MaterialPageRoute(builder: (_) => RegisterPage());
-          case '/cart':
-            return MaterialPageRoute(builder: (_) => CartPage());
-          case '/profile':
-            return MaterialPageRoute(builder: (_) => ProfilePage());
-          case '/renta-form':
-            return MaterialPageRoute(builder: (_) => RentaFormPage());
-          case '/direcciones':
-            return MaterialPageRoute(builder: (_) => DireccionesPage());
-          case '/product-detail':
-            final productId = settings.arguments as int;
             return MaterialPageRoute(
-              builder: (_) => ProductDetailPage(productId: productId),
+              builder: (_) => HomePage(),
+              settings: settings,
             );
+          case '/login':
+            return MaterialPageRoute(
+              builder: (_) => LoginPage(),
+              settings: settings,
+            );
+          case '/register':
+            return MaterialPageRoute(
+              builder: (_) => RegisterPage(),
+              settings: settings,
+            );
+          case '/cart':
+            return MaterialPageRoute(
+              builder: (_) => CartPage(),
+              settings: settings,
+            );
+          case '/profile':
+            return MaterialPageRoute(
+              builder: (_) => ProfilePage(),
+              settings: settings,
+            );
+          case '/direcciones':
+            return MaterialPageRoute(
+              builder: (_) => DireccionesPage(),
+              settings: settings,
+            );
+          case '/product-detail':
+            if (settings.arguments is int) {
+              final productId = settings.arguments as int;
+              return MaterialPageRoute(
+                builder: (_) => ProductDetailPage(productId: productId),
+                settings: settings,
+              );
+            } else {
+              // Manejar el caso cuando no hay ID de producto válido
+              return MaterialPageRoute(
+                builder: (_) {
+                  ScaffoldMessenger.of(_).showSnackBar(
+                    SnackBar(
+                      content: Text("Error: ID de producto no válido"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return HomePage();
+                },
+              );
+            }
           default:
-            return MaterialPageRoute(builder: (_) => HomePage());
+          // Ruta por defecto
+            return MaterialPageRoute(
+              builder: (_) => HomePage(),
+              settings: settings,
+            );
         }
       },
       routes: {}, // Vacío porque usamos onGenerateRoute
