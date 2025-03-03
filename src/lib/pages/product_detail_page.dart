@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import '../api/product_api.dart';
 import '../api/cart_api.dart';
 import '../models/product_model.dart';
+import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 import '../models/auth_model.dart';
 import '../theme/app_theme.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart'; // Necesitarás agregar esta dependencia
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final int productId;
@@ -17,11 +19,55 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
+  bool _isSharing = false;
   int cantidad = 1;
   bool isLoading = false;
   final CartApi cartApi = CartApi();
   final PageController _pageController = PageController();
+  final ProductApi productApi = ProductApi();
 
+  Future<void> _shareProduct(Product product) async {
+    if (!Platform.isAndroid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Compartir solo está disponible en Android'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSharing = true);
+
+    try {
+      final shareText = '''
+¡Mira este increíble producto en Rentz!
+
+📦 ${product.nombreProducto}
+📝 ${product.descripcion}
+🏷️ Categoría: ${product.categoria}
+🛠️ Material: ${product.material}
+💰 Precio: \$${product.precio}${product.esPromocion ? '\n🔥 ¡En promoción!: \$${product.precioPromocion}' : ''}
+📦 Cantidad disponible: ${product.cantidadActual}
+
+¡Renta sin estrés con Rentz!
+''';
+
+      await const MethodChannel('app.channel.shared.data').invokeMethod('shareText', {
+        'text': shareText,
+        'title': 'Compartir producto',
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al compartir: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isSharing = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -36,7 +82,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           height: 350,
           child: PageView.builder(
             controller: _pageController,
-
             itemCount: product.imagenes.isNotEmpty
                 ? product.imagenes.length + 1
                 : 1,
@@ -98,38 +143,40 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ProductApi productApi = ProductApi();
     final authModel = Provider.of<AuthModel>(context, listen: false);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF00345E),
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.share_outlined, color: Colors.white),
-            onPressed: () {
-              // Implementar compartir
-            },
-          ),
-        ],
-      ),
-      body: FutureBuilder<Product>(
-        future: productApi.fetchProductDetails(widget.productId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+    return FutureBuilder<Product>(
+      future: productApi.fetchProductDetails(widget.productId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color(0xFF00345E),
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
               ),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color(0xFF00345E),
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -147,18 +194,59 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                 ],
               ),
-            );
-          } else if (!snapshot.hasData) {
-            return Center(
+            ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color(0xFF00345E),
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: Center(
               child: Text(
                 "No se encontraron detalles del producto",
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          final product = snapshot.data!;
-          return Column(
+        final product = snapshot.data!;
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Color(0xFF00345E),
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              IconButton(
+                icon: _isSharing
+                    ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 2,
+                  ),
+                )
+                    : Icon(Icons.share_outlined, color: Colors.white),
+                onPressed: _isSharing
+                    ? null
+                    : () => _shareProduct(product),
+              ),
+            ],
+          ),
+          body: Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
@@ -203,15 +291,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               ),
                             ),
                             SizedBox(height: 8),
-// En lugar de usar toStringAsFixed, mostraremos el precio directamente ya que ya es un String
-                          Text(
-                            "\$${product.esPromocion && product.precioPromocion != null ? product.precioPromocion : product.precio}",
+                            Text(
+                              "\$${product.esPromocion && product.precioPromocion != null ? product.precioPromocion : product.precio}",
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.primaryColor,
                               ),
-                           ),
+                            ),
                             SizedBox(height: 16),
                             Text(
                               "Descripción",
@@ -365,9 +452,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
