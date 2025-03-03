@@ -26,6 +26,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
   List<Direccion> direcciones = [];
   Direccion? direccionSeleccionada;
   bool isLoading = false;
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -34,11 +35,23 @@ class _RentaFormPageState extends State<RentaFormPage> {
     _cargarDirecciones();
   }
 
+  String formatearFecha(DateTime fecha) {
+    final meses = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+    return "${fecha.day} de ${meses[fecha.month - 1]} del ${fecha.year}";
+  }
+
   Future<void> _cargarDirecciones() async {
+    if (!mounted) return;
+
     setState(() => isLoading = true);
     try {
       final authModel = Provider.of<AuthModel>(context, listen: false);
       final fetchedDirecciones = await DireccionesApi().fetchDirecciones(authModel.token!);
+
+      if (!mounted) return;
 
       setState(() {
         direcciones = fetchedDirecciones;
@@ -47,39 +60,41 @@ class _RentaFormPageState extends State<RentaFormPage> {
         }
       });
     } catch (e) {
-      _mostrarError("Error al cargar direcciones: $e");
+      if (!mounted) return;
+      _mostrarError("Error al cargar direcciones: ${e.toString()}");
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
-  void _mostrarError(String mensaje) {
+  void _mostrarMensaje(String mensaje, {bool isError = false}) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(mensaje),
-        backgroundColor: Colors.red,
+        backgroundColor: isError ? Colors.red : Colors.green,
         behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white,
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+        ),
       ),
     );
   }
 
-  void _mostrarExito(String mensaje) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(mensaje),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+  void _mostrarError(String mensaje) => _mostrarMensaje(mensaje, isError: true);
+  void _mostrarExito(String mensaje) => _mostrarMensaje(mensaje);
 
   Future<void> _seleccionarFecha() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
-      locale: const Locale('es', ''),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -88,23 +103,24 @@ class _RentaFormPageState extends State<RentaFormPage> {
               onPrimary: Colors.white,
             ),
           ),
-          child: child!,
+          child: child ?? Container(),
         );
       },
     );
 
-    if (pickedDate != null) {
+    if (pickedDate != null && mounted) {
       setState(() {
         fechaInicio = pickedDate;
-        fechaFinal = pickedDate.add(Duration(days: 3));
+        fechaFinal = pickedDate.add(const Duration(days: 3));
       });
     }
   }
 
   Future<void> _rentarProducto() async {
     if (!_validarFormulario()) return;
+    if (isSubmitting) return;
 
-    setState(() => isLoading = true);
+    setState(() => isSubmitting = true);
     try {
       final authModel = Provider.of<AuthModel>(context, listen: false);
 
@@ -118,12 +134,22 @@ class _RentaFormPageState extends State<RentaFormPage> {
       );
 
       await RentasApi().crearRenta(authModel.token!, renta);
+
+      if (!mounted) return;
+
       _mostrarExito("Renta creada con éxito");
-      Navigator.popUntil(context, ModalRoute.withName('/cart'));
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed('/cart');
     } catch (e) {
-      _mostrarError("Error al crear la renta: $e");
+      if (!mounted) return;
+      _mostrarError("Error al crear la renta: ${e.toString()}");
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isSubmitting = false);
+      }
     }
   }
 
@@ -141,26 +167,35 @@ class _RentaFormPageState extends State<RentaFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Formulario de Renta"),
-        elevation: 0,
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildProductCard(),
-            SizedBox(height: 16),
-            _buildDireccionCard(),
-            SizedBox(height: 16),
-            _buildFechasCard(),
-            SizedBox(height: 24),
-            _buildConfirmButton(),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        if (isSubmitting) {
+          _mostrarError("Por favor espere mientras se procesa la renta");
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Formulario de Renta"),
+          elevation: 0,
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildProductCard(),
+              const SizedBox(height: 16),
+              _buildDireccionCard(),
+              const SizedBox(height: 16),
+              _buildFechasCard(),
+              const SizedBox(height: 24),
+              _buildConfirmButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -168,6 +203,10 @@ class _RentaFormPageState extends State<RentaFormPage> {
 
   Widget _buildProductCard() {
     return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -177,29 +216,78 @@ class _RentaFormPageState extends State<RentaFormPage> {
               "Detalles del Producto",
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 8),
-            Image.network(
-              widget.cartItem.urlImagenPrincipal,
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Icon(Icons.error),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                widget.cartItem.urlImagenPrincipal,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    height: 200,
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (_, __, ___) => Container(
+                  height: 200,
+                  color: Colors.grey[200],
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, size: 50, color: Colors.grey[600]),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Error al cargar la imagen',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               widget.cartItem.nombreProducto,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(widget.cartItem.descripcion),
-            SizedBox(height: 8),
-            Text(
-              "Costo total: \$${total.toStringAsFixed(2)}",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-              ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Costo de envío:", style: TextStyle(color: Colors.grey[600])),
+                const Text("\$50.00"),
+              ],
+            ),
+            const Divider(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Total a pagar:",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "\$${total.toStringAsFixed(2)}",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -209,34 +297,72 @@ class _RentaFormPageState extends State<RentaFormPage> {
 
   Widget _buildDireccionCard() {
     return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Dirección de Entrega",
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Dirección de Entrega",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_location_alt),
+                  onPressed: () => Navigator.pushNamed(context, '/direcciones'),
+                  tooltip: 'Agregar Nueva Dirección',
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 12),
             if (direcciones.isEmpty)
               _buildNoDireccionesWidget()
             else
-              DropdownButtonFormField<Direccion>(
-                value: direccionSeleccionada,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Selecciona una dirección",
-                ),
-                onChanged: (Direccion? nuevaDireccion) {
-                  setState(() => direccionSeleccionada = nuevaDireccion);
-                },
-                items: direcciones.map((direccion) {
-                  return DropdownMenuItem(
-                    value: direccion,
-                    child: Text("${direccion.calle} #${direccion.numeroExterior}"),
-                  );
-                }).toList(),
+              Column(
+                children: [
+                  DropdownButtonFormField<Direccion>(
+                    value: direccionSeleccionada,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      hintText: "Selecciona una dirección",
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                    onChanged: (Direccion? nuevaDireccion) {
+                      setState(() => direccionSeleccionada = nuevaDireccion);
+                    },
+                    items: direcciones.map((direccion) {
+                      return DropdownMenuItem(
+                        value: direccion,
+                        child: Text("${direccion.calle} #${direccion.numeroExterior}"),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    onPressed: () async {
+                      await Navigator.pushNamed(context, '/direcciones');
+                      // Recargar las direcciones cuando regrese
+                      if (mounted) {
+                        _cargarDirecciones();
+                      }
+                    },
+                    icon: const Icon(Icons.add_circle_outline),
+                    label: const Text("Agregar Nueva Dirección"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
               ),
           ],
         ),
@@ -247,11 +373,34 @@ class _RentaFormPageState extends State<RentaFormPage> {
   Widget _buildNoDireccionesWidget() {
     return Column(
       children: [
-        Text("No hay direcciones registradas"),
-        SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/direcciones'),
-          child: Text("Agregar Dirección"),
+        const Icon(
+          Icons.location_off,
+          size: 48,
+          color: Colors.grey,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          "No hay direcciones registradas",
+          style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          onPressed: () async {
+            await Navigator.pushNamed(context, '/direcciones');
+            // Recargar las direcciones cuando regrese
+            if (mounted) {
+              _cargarDirecciones();
+            }
+          },
+          icon: const Icon(Icons.add_location),
+          label: const Text("Agregar Dirección"),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
         ),
       ],
     );
@@ -259,6 +408,10 @@ class _RentaFormPageState extends State<RentaFormPage> {
 
   Widget _buildFechasCard() {
     return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -268,18 +421,22 @@ class _RentaFormPageState extends State<RentaFormPage> {
               "Fechas de Renta",
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _seleccionarFecha,
-              icon: Icon(Icons.calendar_today),
+              icon: const Icon(Icons.calendar_today),
               label: Text(
                 fechaInicio == null
                     ? "Seleccionar Fecha de Inicio"
-                    : "Inicio: ${fechaInicio!.toLocal().toString().split(' ')[0]}\n"
-                    "Fin: ${fechaFinal!.toLocal().toString().split(' ')[0]}",
+                    : "Inicio: ${formatearFecha(fechaInicio!)}\n"
+                    "Fin: ${formatearFecha(fechaFinal!)}",
+                textAlign: TextAlign.center,
               ),
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],
@@ -290,16 +447,36 @@ class _RentaFormPageState extends State<RentaFormPage> {
 
   Widget _buildConfirmButton() {
     return ElevatedButton(
-      onPressed: isLoading ? null : _rentarProducto,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          isLoading ? "Procesando..." : "Confirmar Renta",
-          style: TextStyle(fontSize: 18),
+      onPressed: (isLoading || isSubmitting) ? null : _rentarProducto,
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(double.infinity, 50),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isSubmitting)
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            Text(
+              isSubmitting ? "Procesando..." : "Confirmar Renta",
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
       ),
     );
   }
