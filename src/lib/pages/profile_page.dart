@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../api/auth_api.dart';
 import '../models/auth_model.dart';
 import '../models/profile_model.dart';
-import 'home_page.dart';
 import '../theme/app_theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -31,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = false;
   bool _isEditing = false;
   String? _errorMessage;
+  String? _telefonoError; // Variable para el mensaje de error del teléfono
 
   File? _selectedImage; // Para almacenar la imagen seleccionada
 
@@ -78,9 +78,22 @@ class _ProfilePageState extends State<ProfilePage> {
     _apellidosController.text = _originalApellidos;
     _correoController.text = _originalCorreo;
     _telefonoController.text = _originalTelefono;
+    _telefonoError = null; // Limpiar el mensaje de error del teléfono
   }
 
   Future<void> _updateProfile() async {
+    // Validar que el número telefónico tenga exactamente 10 dígitos
+    if (_telefonoController.text.trim().length != 10) {
+      setState(() {
+        _telefonoError = "El número de teléfono debe tener exactamente 10 dígitos.";
+      });
+      return;
+    } else {
+      setState(() {
+        _telefonoError = null; // Limpiar el mensaje de error si es válido
+      });
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -322,33 +335,41 @@ class _ProfilePageState extends State<ProfilePage> {
       String label,
       IconData icon, {
         TextInputType? keyboardType,
+        String? errorText,
       }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: AppTheme.primaryColor),
-        filled: true,
-        fillColor: Colors.white,
-        labelStyle: TextStyle(color: Colors.grey[600]),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(12),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            labelText: label,
+            prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+            filled: true,
+            fillColor: Colors.white,
+            labelStyle: TextStyle(color: Colors.grey[600]),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppTheme.errorColor),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppTheme.errorColor, width: 2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            errorText: errorText,
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.errorColor),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.errorColor, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
+        if (errorText != null) SizedBox(height: 8),
+      ],
     );
   }
 
@@ -557,6 +578,7 @@ class _ProfilePageState extends State<ProfilePage> {
           "Número de Teléfono",
           Icons.phone,
           keyboardType: TextInputType.phone,
+          errorText: _telefonoError,
         ),
         SizedBox(height: 24),
         Row(
