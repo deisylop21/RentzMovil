@@ -8,17 +8,7 @@ class Direccion {
   final String? referencia;
   final String numeroContacto;
   final bool direccionPrioritaria;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is Direccion &&
-              runtimeType == other.runtimeType &&
-              id == other.id; // Compara solo por ID
-
-  @override
-  int get hashCode => id.hashCode;
-
+  final String? googleMapsUrl; // Nueva propiedad
 
   Direccion({
     this.id,
@@ -30,7 +20,7 @@ class Direccion {
     this.referencia,
     required this.numeroContacto,
     required this.direccionPrioritaria,
-
+    this.googleMapsUrl, // Nuevo campo opcional
   });
 
   factory Direccion.fromJson(Map<String, dynamic> json) {
@@ -44,6 +34,7 @@ class Direccion {
       referencia: json['Referencia'],
       numeroContacto: json['Numero_contacto'],
       direccionPrioritaria: json['Direccion_Prioritaria'] == 1,
+      googleMapsUrl: json['googleMapsUrl'],
     );
   }
 
@@ -57,7 +48,8 @@ class Direccion {
       "Colonia": colonia,
       "Referencia": referencia,
       "Numero_contacto": numeroContacto,
-      "Direccion_Prioritaria": direccionPrioritaria, // Enviar como booleano
+      "Direccion_Prioritaria": direccionPrioritaria,
+      "googleMapsUrl": googleMapsUrl,
     };
   }
 }

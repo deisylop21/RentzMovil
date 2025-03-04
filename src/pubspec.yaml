@@ -1,9 +1,9 @@
 name: RentzMovil
 description: "Con Rentz, renta sin estrés"
 publish_to: 'none'
-version: 1.0.0+6
+version: 1.0.0+9
 
-environment:
+environment: 
   sdk: ^3.6.1
 
 dependencies:
@@ -24,6 +24,9 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   sqflite: ^2.3.0
   url_launcher: ^6.2.1
+  webview_flutter: ^4.4.2
+  webview_flutter_android: ^3.12.1
+  webview_flutter_wkwebview: ^3.9.4
 
 dev_dependencies:
   build_runner: ^2.4.0

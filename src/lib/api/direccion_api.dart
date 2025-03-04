@@ -36,7 +36,8 @@ class DireccionesApi {
       "Colonia": direccion.colonia,
       "Referencia": direccion.referencia ?? "",
       "Numero_contacto": direccion.numeroContacto,
-      "Direccion_Prioritaria": direccion.direccionPrioritaria ?? false, // ← Si es null, lo pone en false
+      "Direccion_Prioritaria": direccion.direccionPrioritaria,
+      "googleMapsUrl": direccion.googleMapsUrl, // ← Si es null, lo pone en false
     };
 
     print("📡 Enviando datos: ${data}");
