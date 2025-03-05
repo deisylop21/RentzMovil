@@ -3,7 +3,7 @@ description: "Con Rentz, renta sin estrés"
 publish_to: 'none'
 version: 1.0.0+9
 
-environment: 
+environment:
   sdk: ^3.6.1
 
 dependencies:

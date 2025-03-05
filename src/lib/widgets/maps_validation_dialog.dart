@@ -24,7 +24,6 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
   @override
   void initState() {
     super.initState();
-    // Inicializar plataforma específica
     late final PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
@@ -37,6 +36,9 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
 
     final WebViewController controller = WebViewController.fromPlatformCreationParams(params);
 
+    final String encodedQuery = Uri.encodeComponent(widget.direccionQuery + " Merida Yucatan");
+    final String searchUrl = 'https://www.google.com/maps/search/$encodedQuery/?hl=es';
+
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -48,6 +50,20 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
             });
           },
           onPageFinished: (String url) {
+            controller.runJavaScript('''
+          try {
+            let coords = document.querySelector('meta[property="og:image"]')?.content;
+            if (coords) {
+              let match = coords.match(/@(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)/);
+              if (match) {
+                window.flutter_inappwebview.callHandler('updateCoords', match[1], match[2]);
+              }
+            }
+          } catch(e) {
+            console.error('Error getting coordinates:', e);
+          }
+        ''');
+
             setState(() {
               isLoading = false;
               currentUrl = url;
@@ -64,11 +80,8 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
             );
           },
         ),
-      );
-
-    final String encodedQuery = Uri.encodeComponent(widget.direccionQuery);
-    final String searchUrl = 'https://www.google.com/maps/search/$encodedQuery';
-    controller.loadRequest(Uri.parse(searchUrl));
+      )
+      ..loadRequest(Uri.parse(searchUrl));
 
     _controller = controller;
   }
@@ -79,10 +92,17 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: MediaQuery.of(context).size.height * 0.8, // Increased height
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20), // Slightly more rounded
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -90,7 +110,7 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppTheme.primaryColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Row(
                 children: [
@@ -113,6 +133,20 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
                 ],
               ),
             ),
+            // Instruction Banner
+            Container(
+              width: double.infinity,
+              color: Colors.orange[100],
+              padding: EdgeInsets.all(12),
+              child: Text(
+                '👉 Toca el punto rojo del mapa para verificar la ubicación exacta, luego presiona "Confirmar ubicación".',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.orange[800],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
             Expanded(
               child: Stack(
                 children: [
@@ -129,20 +163,45 @@ class _MapsValidationDialogState extends State<MapsValidationDialog> {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.grey[300]!)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[300]!,
+                    offset: Offset(0, -2),
+                    blurRadius: 5,
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primaryColor,
+                    ),
                     child: Text('Cancelar'),
                   ),
                   SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context, currentUrl),
+                    onPressed: () {
+                      if (currentUrl.contains("@") && currentUrl.contains(",")) {
+                        Navigator.pop(context, currentUrl);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Por favor, ajuste la ubicación en el mapa'),
+                            backgroundColor: Colors.orange,
+                          ),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.secondaryColor,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     child: Text('Confirmar ubicación'),
                   ),
