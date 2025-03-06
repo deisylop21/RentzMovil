@@ -22,49 +22,46 @@ class SearchBarWidget extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
-        child: Container(
-          height: 50,
-          child: TextFormField(
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-            ),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Buscar en Rentz',
-              hintStyle: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 16,
-              ),
-              prefixIcon: Container(
-                padding: EdgeInsets.all(12),
-                child: Icon(
-                  Icons.search_rounded,
-                  color: Colors.grey[600],
-                  size: 24,
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                  width: 1.5,
-                ),
-              ),
-            ),
-            onChanged: onSearchChanged,
-            textAlignVertical: TextAlignVertical.center,
+        child: TextFormField(
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
           ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Buscar en Rentz',
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 16,
+            ),
+            prefixIcon: Container(
+              padding: EdgeInsets.all(12),
+              child: Icon(
+                Icons.search_rounded,
+                color: Colors.grey[600],
+                size: 24,
+              ),
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor,
+                width: 1.5,
+              ),
+            ),
+          ),
+          onChanged: onSearchChanged,
+          textAlignVertical: TextAlignVertical.center,
         ),
       ),
     );
