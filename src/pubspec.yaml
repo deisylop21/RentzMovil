@@ -1,7 +1,7 @@
 name: RentzMovil
 description: "Con Rentz, renta sin estrés"
 publish_to: 'none'
-version: 1.0.0+10
+version: 1.0.0+12
 
 environment:
   sdk: ^3.6.1

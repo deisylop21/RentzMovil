@@ -90,10 +90,13 @@ class _RentaFormPageState extends State<RentaFormPage> {
   void _mostrarExito(String mensaje) => _mostrarMensaje(mensaje);
 
   Future<void> _seleccionarFecha() async {
+    // Configuramos la fecha inicial como mañana
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: tomorrow, // Inicializamos con mañana en lugar de hoy
+      firstDate: tomorrow, // Primera fecha disponible es mañana
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
         return Theme(
