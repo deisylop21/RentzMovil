@@ -6,6 +6,7 @@ import '../models/renta2_model.dart';
 import '../api/rentas_api.dart';
 import '../api/direccion_api.dart';
 import '../models/direccion_model.dart';
+import '../theme/app_theme.dart';
 
 class RentaFormPage extends StatefulWidget {
   final CartItem cartItem;
@@ -90,34 +91,154 @@ class _RentaFormPageState extends State<RentaFormPage> {
   void _mostrarExito(String mensaje) => _mostrarMensaje(mensaje);
 
   Future<void> _seleccionarFecha() async {
-    // Configuramos la fecha inicial como mañana
     final tomorrow = DateTime.now().add(const Duration(days: 1));
+    DateTime selectedDate = tomorrow;
+    DateTime currentMonth = tomorrow;
 
-    final DateTime? pickedDate = await showDatePicker(
+    await showModalBottomSheet(
       context: context,
-      initialDate: tomorrow, // Inicializamos con mañana en lugar de hoy
-      firstDate: tomorrow, // Primera fecha disponible es mañana
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Theme.of(context).primaryColor,
-              onPrimary: Colors.white,
-            ),
-          ),
-          child: child ?? Container(),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 3,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back_ios, color: Colors.blueAccent),
+                        onPressed: () {
+                          setModalState(() {
+                            currentMonth = DateTime(currentMonth.year, currentMonth.month - 1, 1);
+                          });
+                        },
+                      ),
+                      Text(
+                        "${_obtenerNombreMes(currentMonth.month)} ${currentMonth.year}",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
+                        onPressed: () {
+                          setModalState(() {
+                            currentMonth = DateTime(currentMonth.year, currentMonth.month + 1, 1);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Container(
+                    height: 320,
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: 31,
+                      itemBuilder: (context, index) {
+                        DateTime date = DateTime(currentMonth.year, currentMonth.month, index + 1);
+                        bool isDisabled = date.isBefore(tomorrow);
+                        return GestureDetector(
+                          onTap: isDisabled
+                              ? null
+                              : () {
+                            setState(() {
+                              selectedDate = date;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                selectedDate == date ? 'assets/images/mesa_seleccionada.png' : 'assets/images/mesa.png',
+                                width: 30,
+                                height: 30,
+                                color: isDisabled ? Colors.grey : null,
+                              ),
+                              SizedBox(height: 4),
+                              AnimatedContainer(
+                                duration: Duration(milliseconds: 300),
+                                decoration: BoxDecoration(
+                                  color: selectedDate == date
+                                      ? Colors.blueAccent
+                                      : isDisabled
+                                      ? Colors.grey.shade300
+                                      : Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: selectedDate == date ? Colors.blueAccent : Colors.grey.shade400,
+                                    width: 2,
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                width: 40,
+                                height: 40,
+                                child: Text(
+                                  "${date.day}",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDisabled
+                                        ? Colors.grey
+                                        : selectedDate == date
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
 
-    if (pickedDate != null && mounted) {
-      setState(() {
-        fechaInicio = pickedDate;
-        fechaFinal = pickedDate.add(const Duration(days: 3));
-      });
-    }
+    setState(() {
+      fechaInicio = selectedDate;
+      fechaFinal = selectedDate.add(const Duration(days: 3));
+    });
   }
+
+  String _obtenerNombreMes(int mes) {
+    const nombresMeses = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    return nombresMeses[mes - 1];
+  }
+
 
   Future<void> _rentarProducto() async {
     if (!_validarFormulario()) return;
@@ -420,23 +541,39 @@ class _RentaFormPageState extends State<RentaFormPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Fechas de Renta",
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              children: [
+                Icon(Icons.chair, color: AppTheme.primaryColor, size: 24), // Ícono de mobiliario
+                SizedBox(width: 8),
+                Text(
+                  "Fechas de Renta",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _seleccionarFecha,
-              icon: const Icon(Icons.calendar_today),
-              label: Text(
-                fechaInicio == null
-                    ? "Seleccionar Fecha de Inicio"
-                    : "Inicio: ${formatearFecha(fechaInicio!)}\n"
+              icon: Icon(Icons.calendar_today, color: Colors.white),
+              label: fechaInicio == null
+                  ? Text("Seleccionar Fecha de Inicio")
+                  : Column(
+                children: [
+                  Text(
+                    "Inicio: ${formatearFecha(fechaInicio!)}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  Text(
                     "Fin: ${formatearFecha(fechaFinal!)}",
-                textAlign: TextAlign.center,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
+                backgroundColor: AppTheme.primaryColor, // Color temático
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
