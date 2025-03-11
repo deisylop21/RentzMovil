@@ -5,6 +5,7 @@ import '../models/renta_model.dart';
 import '../models/auth_model.dart';
 import '../theme/app_theme.dart';
 import 'renta_detail_page.dart';
+import '../widgets/bottom_navigation_bar_widget.dart';
 
 class RentasPage extends StatefulWidget {
   @override
@@ -24,7 +25,8 @@ class _RentasPageState extends State<RentasPage> {
     final authModel = Provider.of<AuthModel>(context, listen: false);
     if (authModel.token == null || authModel.token!.isEmpty) {
       setState(() {
-        _rentasFuture = Future.error("Debes iniciar sesión para ver tus rentas.");
+        _rentasFuture =
+            Future.error("Debes iniciar sesión para ver tus rentas.");
       });
     } else {
       setState(() {
@@ -57,7 +59,8 @@ class _RentasPageState extends State<RentasPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RentaDetailPage(idRenta: renta.idRentaProducto),
+              builder: (context) =>
+                  RentaDetailPage(idRenta: renta.idRentaProducto),
             ),
           );
         },
@@ -79,7 +82,8 @@ class _RentasPageState extends State<RentasPage> {
                       width: 80,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
-                          Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+                          Icon(Icons.image_not_supported, size: 80,
+                              color: Colors.grey),
                     )
                         : Icon(Icons.image, size: 80, color: Colors.grey),
                   ),
@@ -138,6 +142,7 @@ class _RentasPageState extends State<RentasPage> {
       ),
     );
   }
+
   Widget _buildErrorState(String error) {
     return Center(
       child: Container(
@@ -229,7 +234,8 @@ class _RentasPageState extends State<RentasPage> {
           SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/home', (route) => false);
             },
             icon: Icon(Icons.add_shopping_cart),
             label: Text("Explorar productos"),
@@ -251,6 +257,7 @@ class _RentasPageState extends State<RentasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -298,7 +305,8 @@ class _RentasPageState extends State<RentasPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      AppTheme.primaryColor),
                 ),
               );
             } else if (snapshot.hasError) {
@@ -316,6 +324,11 @@ class _RentasPageState extends State<RentasPage> {
             }
           },
         ),
+      ),
+      bottomNavigationBar: buildBottomNavigationBar(
+          context,
+          Provider.of<AuthModel>(context),
+          currentIndex: 1 // 1 es el índice para la página de rentas
       ),
     );
   }

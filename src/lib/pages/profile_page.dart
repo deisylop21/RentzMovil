@@ -8,6 +8,7 @@ import '../api/auth_api.dart';
 import '../models/auth_model.dart';
 import '../models/profile_model.dart';
 import '../theme/app_theme.dart';
+import '../widgets/bottom_navigation_bar_widget.dart'; //import del widget
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -546,6 +547,11 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: buildBottomNavigationBar(
+          context,
+          Provider.of<AuthModel>(context),
+          currentIndex: 3
       ),
     );
   }

@@ -1,7 +1,7 @@
 name: RentzMovil
 description: "Con Rentz, renta sin estrés"
 publish_to: 'none'
-version: 1.0.0+15
+version: 1.0.0+17
 
 environment:
   sdk: ^3.6.1
@@ -48,3 +48,4 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/

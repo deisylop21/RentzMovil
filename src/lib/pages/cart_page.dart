@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../api/cart_api.dart';
 import '../models/auth_model.dart';
 import '../models/cart_model.dart';
+import '../widgets/bottom_navigation_bar_widget.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -217,6 +218,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     if (!_isAuthenticated) {
       return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,//
           title: Text("Carrito de Compras"),
           elevation: 0,
         ),
@@ -250,6 +252,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     if (!_isInitialized) {
       return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,//
           title: Text("Carrito de Compras"),
           elevation: 0,
         ),
@@ -259,6 +262,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,//
         title: Text("Carrito de Compras"),
         elevation: 0,
         actions: [
@@ -273,9 +277,17 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
           : _cartItems.isEmpty
           ? _buildEmptyCart()
           : _buildCartContent(),
-      bottomNavigationBar: _cartItems.isEmpty
-          ? null
-          : _buildBottomCheckout(),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_cartItems.isNotEmpty) _buildBottomCheckout(),
+          buildBottomNavigationBar(
+              context,
+              Provider.of<AuthModel>(context),
+              currentIndex: 2
+          ),
+        ],
+      ),
     );
   }
 
