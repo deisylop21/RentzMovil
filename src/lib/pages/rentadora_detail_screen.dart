@@ -12,7 +12,7 @@ import '../widgets/product_card.dart';
 import '../widgets/loading_shimmer.dart';
 import '../widgets/error_state.dart';
 import 'product_detail_page.dart';
-import '../widgets/product_section.dart';
+import '../widgets/product_section2.dart';
 
 // Widget para texto expandible
 class ExpandableText extends StatefulWidget {
@@ -44,7 +44,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             widget.text,
             style: widget.style ?? TextStyle(
               fontSize: 15,
-              color: Colors.grey[800],
+              color: AppTheme.grey,
               height: 1.4,
             ),
             maxLines: widget.maxLines,
@@ -54,7 +54,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             widget.text,
             style: widget.style ?? TextStyle(
               fontSize: 15,
-              color: Colors.grey[800],
+              color: AppTheme.grey,
               height: 1.4,
             ),
           ),
@@ -197,7 +197,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           curve: Curves.easeOut,
         );
       },
-      child: const Icon(Icons.arrow_upward, color: Colors.white),
+      child: const Icon(Icons.arrow_upward, color: AppTheme.White),
     );
   }
 
@@ -264,13 +264,13 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           child: Text(
             widget.rentadoraNombre,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppTheme.White,
               fontWeight: FontWeight.bold,
               fontSize: 20,
               shadows: [
                 Shadow(
                   blurRadius: 8.0,
-                  color: Colors.black54,
+                  color: AppTheme.black,
                   offset: Offset(0, 2),
                 ),
               ],
@@ -295,10 +295,10 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       imageUrl: _rentadoraDetail!.urlBanner!,
       fit: BoxFit.cover,
       placeholder: (context, url) => Container(
-        color: Colors.grey[300],
+        color: AppTheme.grey,
         child: const Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.white),
+            valueColor: AlwaysStoppedAnimation(AppTheme.White),
           ),
         ),
       ),
@@ -307,7 +307,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
         child: const Icon(
           Icons.image_not_supported,
           size: 50,
-          color: Colors.white,
+          color: AppTheme.White,
         ),
       ),
     );
@@ -322,7 +322,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           style: const TextStyle(
             fontSize: 60,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppTheme.White,
           ),
         ),
       ),
@@ -337,7 +337,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withOpacity(0.5),
+            AppTheme.grey,
           ],
         ),
       ),
@@ -349,11 +349,11 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.White,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppTheme.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -379,19 +379,19 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
                 _buildInfoRow(
                   Icons.star,
                   '${rentadora.puntuacion?.toStringAsFixed(1) ?? "0.0"}',
-                  Colors.amber,
+                  AppTheme.secondaryColor,
                 ),
                 const SizedBox(height: 4),
                 _buildInfoRow(
                   Icons.location_on,
                   'CP: ${rentadora.codigoPostal ?? 'No disponible'}',
-                  Colors.grey[600]!,
+                  AppTheme.grey,
                 ),
                 const SizedBox(height: 4),
                 _buildInfoRow(
                   Icons.access_time,
                   '${rentadora.horarioAbre ?? '00:00'} - ${rentadora.horarioCierra ?? '00:00'}',
-                  Colors.grey[600]!,
+                  AppTheme.grey,
                 ),
               ],
             ),
@@ -407,10 +407,10 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       height: 80,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 3),
+        border: Border.all(color: AppTheme.White, width: 3),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: AppTheme.black,
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -421,13 +421,13 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           imageUrl: rentadora.urlLogo,
           fit: BoxFit.cover,
           placeholder: (context, url) => Container(
-            color: Colors.grey[200],
+            color: AppTheme.grey,
             child: const Center(
               child: CircularProgressIndicator(),
             ),
           ),
           errorWidget: (context, url, error) => Container(
-            color: Colors.grey[200],
+            color: AppTheme.grey,
             child: Icon(
               Icons.store,
               size: 40,
@@ -452,7 +452,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             text,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[700],
+              color: AppTheme.grey,
               height: 1.2,  // Mejor espaciado vertical
             ),
             overflow: TextOverflow.ellipsis,  // Manejo de desbordamiento
@@ -468,11 +468,11 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.White,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppTheme.grey,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -504,7 +504,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             maxLines: 3,  // Ajustable según necesidades
             style: TextStyle(
               fontSize: 15,
-              color: Colors.grey[800],
+              color: AppTheme.black,
               height: 1.4,
               letterSpacing: 0.2,  // Mejor legibilidad
             ),
@@ -573,7 +573,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             Icon(
               Icons.inventory_2_outlined,
               size: 64,
-              color: Colors.grey[400],
+              color: AppTheme.grey,
             ),
             const SizedBox(height: 16),
             Text(
@@ -581,7 +581,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: AppTheme.grey,
               ),
             ),
             const SizedBox(height: 8),
@@ -589,7 +589,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
               'Vuelve más tarde para ver nuevos productos',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey[500],
+                color: AppTheme.grey,
               ),
               textAlign: TextAlign.center,
             ),
@@ -652,7 +652,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
               ),
             ),
             const SizedBox(width: 12),
@@ -697,11 +697,11 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.White,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppTheme.black,
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -761,14 +761,14 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           children: [
             const Icon(
               Icons.error_outline,
-              color: Colors.white,
+              color: AppTheme.White,
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 'Error al cargar los detalles del producto: $error',
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppTheme.White,
                   fontSize: 14,
                 ),
                 maxLines: 2,
@@ -778,7 +778,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           ],
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.red,
+        backgroundColor: AppTheme.errorColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -790,7 +790,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: 'Reintentar',
-          textColor: Colors.white,
+          textColor: AppTheme.White,
           onPressed: () => _navigateToProductDetail(product),
         ),
       ),

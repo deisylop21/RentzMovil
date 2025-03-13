@@ -8,6 +8,7 @@ import 'dart:io' show Platform;
 import '../models/auth_model.dart';
 import '../theme/app_theme.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../widgets/quantity_selector2.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final int productId;
@@ -25,13 +26,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   final CartApi cartApi = CartApi();
   final PageController _pageController = PageController();
   final ProductApi productApi = ProductApi();
+  Future<Product>? _productFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productFuture = productApi.fetchProductDetails(widget.productId);
+  }
 
   Future<void> _shareProduct(Product product) async {
     if (!Platform.isAndroid) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Compartir solo está disponible en Android'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
       return;
@@ -48,8 +56,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
 📦 ${product.nombreProducto}
 📝 ${product.descripcion}
-🏷️ Categoría: ${product.categoria}
-🛠️ Material: ${product.material}
 💰 Precio: \$${product.precio}${product.esPromocion ? '\n🔥 ¡En promoción!: \$${product.precioPromocion}' : ''}
 📦 Cantidad disponible: ${product.cantidadActual}
 
@@ -66,7 +72,7 @@ Ver producto: $productUrl
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al compartir: ${e.toString()}'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     } finally {
@@ -78,6 +84,15 @@ Ver producto: $productUrl
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  // Método para actualizar la cantidad sin recargar toda la página
+  void _updateQuantity(int value) {
+    // Asegurar que no exceda la cantidad disponible
+    // (La validación debería hacerse aquí ya que no tenemos maxValue en el widget)
+    setState(() {
+      cantidad = value;
+    });
   }
 
   Widget _buildImageSlider(Product product) {
@@ -93,7 +108,7 @@ Ver producto: $productUrl
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: AppTheme.White,
                 ),
                 child: Hero(
                   tag: 'product-${product.idProducto}',
@@ -107,7 +122,7 @@ Ver producto: $productUrl
                         child: Icon(
                           Icons.image_not_supported,
                           size: 64,
-                          color: Colors.grey[400],
+                          color: AppTheme.primaryColor,
                         ),
                       );
                     },
@@ -134,7 +149,7 @@ Ver producto: $productUrl
               controller: _pageController,
               count: product.imagenes.isNotEmpty ? product.imagenes.length + 1 : 1,
               effect: WormEffect(
-                dotColor: Colors.grey[300]!,
+                dotColor: AppTheme.primaryColor!,
                 activeDotColor: AppTheme.primaryColor,
                 dotHeight: 8,
                 dotWidth: 8,
@@ -151,15 +166,15 @@ Ver producto: $productUrl
     final authModel = Provider.of<AuthModel>(context, listen: false);
 
     return FutureBuilder<Product>(
-      future: productApi.fetchProductDetails(widget.productId),
+      future: _productFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Color(0xFF00345E),
+              backgroundColor: AppTheme.primaryColor,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(Icons.arrow_back_ios, color: AppTheme.White),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -174,10 +189,10 @@ Ver producto: $productUrl
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Color(0xFF00345E),
+              backgroundColor: AppTheme.primaryColor,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(Icons.arrow_back_ios, color: AppTheme.White),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -185,7 +200,7 @@ Ver producto: $productUrl
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  Icon(Icons.error_outline, size: 60, color: AppTheme.errorColor),
                   SizedBox(height: 16),
                   Text(
                     "Error al cargar el producto",
@@ -195,7 +210,7 @@ Ver producto: $productUrl
                   Text(
                     snapshot.error.toString(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: AppTheme.grey),
                   ),
                 ],
               ),
@@ -206,17 +221,17 @@ Ver producto: $productUrl
         if (!snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Color(0xFF00345E),
+              backgroundColor: AppTheme.primaryColor,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(Icons.arrow_back_ios, color: AppTheme.White),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
             body: Center(
               child: Text(
                 "No se encontraron detalles del producto",
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 16, color: AppTheme.grey),
               ),
             ),
           );
@@ -225,12 +240,12 @@ Ver producto: $productUrl
         final product = snapshot.data!;
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppTheme.White,
           appBar: AppBar(
-            backgroundColor: Color(0xFF00345E),
+            backgroundColor: AppTheme.primaryColor,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+              icon: Icon(Icons.arrow_back_ios, color: AppTheme.White),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
@@ -240,11 +255,11 @@ Ver producto: $productUrl
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
                     strokeWidth: 2,
                   ),
                 )
-                    : Icon(Icons.share_outlined, color: Colors.white),
+                    : Icon(Icons.share_outlined, color: AppTheme.White),
                 onPressed: _isSharing
                     ? null
                     : () => _shareProduct(product),
@@ -292,7 +307,7 @@ Ver producto: $productUrl
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: AppTheme.black,
                               ),
                             ),
                             SizedBox(height: 8),
@@ -310,7 +325,7 @@ Ver producto: $productUrl
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: AppTheme.black,
                               ),
                             ),
                             SizedBox(height: 8),
@@ -318,7 +333,7 @@ Ver producto: $productUrl
                               product.descripcion,
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.grey[600],
+                                color: AppTheme.black,
                                 height: 1.5,
                               ),
                             ),
@@ -332,10 +347,10 @@ Ver producto: $productUrl
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.White,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: AppTheme.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: Offset(0, -5),
                     ),
@@ -343,37 +358,28 @@ Ver producto: $productUrl
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.remove),
-                            onPressed: cantidad > 1
-                                ? () => setState(() => cantidad--)
-                                : null,
-                            color: AppTheme.primaryColor,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              cantidad.toString(),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                    QuantitySelector(
+                      initialValue: cantidad,
+                      onQuantityChanged: (value) {
+                        // Asegurarnos de que la cantidad no exceda la disponible
+                        if (product.cantidadActual >= value) {
+                          _updateQuantity(value);
+                        } else {
+                          // Opcional: mostrar mensaje de error
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Solo hay ${product.cantidadActual} unidades disponibles",
+                                style: TextStyle(color: AppTheme.White),
                               ),
+                              backgroundColor: AppTheme.errorColor,
+                              behavior: SnackBarBehavior.floating,
                             ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () => setState(() => cantidad++),
-                            color: AppTheme.primaryColor,
-                          ),
-                        ],
-                      ),
+                          );
+                          // Establecer al máximo disponible
+                          _updateQuantity(product.cantidadActual);
+                        }
+                      },
                     ),
                     SizedBox(width: 16),
                     Expanded(
@@ -386,9 +392,9 @@ Ver producto: $productUrl
                               SnackBar(
                                 content: Text(
                                   "Inicia sesión para usar el Carrito",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: AppTheme.White),
                                 ),
-                                backgroundColor: Colors.red,
+                                backgroundColor: AppTheme.errorColor,
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -408,9 +414,9 @@ Ver producto: $productUrl
                               SnackBar(
                                 content: Text(
                                   "¡Producto añadido al carrito!",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: AppTheme.White),
                                 ),
-                                backgroundColor: Colors.green,
+                                backgroundColor: AppTheme.successColor,
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -420,9 +426,9 @@ Ver producto: $productUrl
                               SnackBar(
                                 content: Text(
                                   "Error: $e",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: AppTheme.White),
                                 ),
-                                backgroundColor: Colors.red,
+                                backgroundColor: AppTheme.errorColor,
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -440,7 +446,7 @@ Ver producto: $productUrl
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
                             strokeWidth: 2,
                           ),
                         )
@@ -455,7 +461,7 @@ Ver producto: $productUrl
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         );

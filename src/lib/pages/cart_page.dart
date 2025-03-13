@@ -440,12 +440,6 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 4),
-                            Text(
-                              item.descripcion,
-                              style: AppTheme.titleStyle,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
                           ],
                         ),
                       ),

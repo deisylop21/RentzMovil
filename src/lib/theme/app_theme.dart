@@ -10,6 +10,8 @@ class AppTheme {
   static const Color backgroundColor = Color(0xFFFAFAFA); // Blanco cálido para mejor contraste
   static const Color White = Color(0xFFFFFFFF);
   static const Color successColor = Color(0xFF4CAF50);
+  static const Color black = Color(0xFF000000);
+  static const Color grey = Color(0x75636363);
 
 
   // Estilos de texto

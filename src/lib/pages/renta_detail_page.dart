@@ -63,7 +63,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
           content,
           style: TextStyle(
             fontSize: 18,
-            color: Colors.grey[800],
+            color: AppTheme.successColor,
           ),
         ),
         SizedBox(height: 16),
@@ -77,11 +77,11 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
 
     switch (status.toLowerCase()) {
       case 'pendiente_pago':
-        statusColor = Colors.orange;
+        statusColor = AppTheme.secondaryColor;
         statusText = 'Pendiente de Pago';
         break;
       case 'activo':
-        statusColor = Colors.green;
+        statusColor = AppTheme.successColor;
         statusText = 'Activo';
         break;
       case 'finalizado':
@@ -89,7 +89,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
         statusText = 'Finalizado';
         break;
       default:
-        statusColor = Colors.grey;
+        statusColor = AppTheme.grey;
         statusText = status;
     }
 
@@ -129,7 +129,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
         title: Text(
           'Detalles de la Renta',
           style: TextStyle(
-            color: Colors.white,
+            color: AppTheme.White,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -185,7 +185,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                   width: double.infinity,
                   height: 250,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: AppTheme.grey,
                   ),
                   child: Hero(
                     tag: 'renta_${renta.idRentaProducto}',
@@ -195,7 +195,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                       errorBuilder: (context, error, stackTrace) => Icon(
                         Icons.image_not_supported,
                         size: 100,
-                        color: Colors.grey[400],
+                        color: AppTheme.grey,
                       ),
                     ),
                   ),
@@ -241,7 +241,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                                 Text(
                                   "Precio base",
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: AppTheme.grey,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -261,7 +261,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                                 Text(
                                   "Total a pagar",
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: AppTheme.grey,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -283,7 +283,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                       // Descripción
                       Card(
                         elevation: 0,
-                        color: Colors.white,
+                        color: AppTheme.White,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -305,7 +305,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                                 renta.descripcion,
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.grey[800],
+                                  color: AppTheme.black,
                                   height: 1.5,
                                 ),
                               ),
@@ -318,7 +318,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                       // Información de entrega
                       Card(
                         elevation: 0,
-                        color: Colors.white,
+                        color: AppTheme.White,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -332,7 +332,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.primaryColor,
+                                  color: AppTheme.darkTurquoise,
                                 ),
                               ),
                               SizedBox(height: 16),
@@ -347,17 +347,17 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
                               Container(
                                 padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.lightTurquoise.withOpacity(0.1),
+                                  color: AppTheme.darkTurquoise.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: AppTheme.lightTurquoise.withOpacity(0.3),
+                                    color: AppTheme.darkTurquoise.withOpacity(0.3),
                                   ),
                                 ),
                                 child :Row(
                                   children: [
                                     Icon(
                                       Icons.calendar_today,
-                                      color: AppTheme.lightTurquoise,
+                                      color: AppTheme.darkTurquoise,
                                     ),
                                     SizedBox(width: 12),
                                     Expanded(
@@ -393,10 +393,10 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
             return Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.White,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: AppTheme.black.withOpacity(0.05),
                     offset: Offset(0, -4),
                     blurRadius: 8,
                   ),

@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       (context, index) {
                     final category = _categorizedProducts.keys.elementAt(index);
                     final products = _categorizedProducts[category]!;
-                    return ProductSection(category: category, products: products);
+                    return ProductSection(products: products);
                   },
                   childCount: _categorizedProducts.length,
                 ),

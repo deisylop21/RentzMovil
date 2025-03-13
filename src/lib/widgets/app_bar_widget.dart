@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../models/auth_model.dart';
 import '../widgets/search_bar_widget.dart';
 import '../theme/app_theme.dart';
@@ -8,6 +9,7 @@ import '../models/auth_model.dart';
 
 PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, ValueChanged<String> onSearchChanged) {
   return AppBar(
+    automaticallyImplyLeading: false,
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
@@ -39,6 +41,13 @@ PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, Value
     ),
   );
 }
+
+Future<void> _logout(BuildContext context) async {
+  final authModel = Provider.of<AuthModel>(context, listen: false);
+  authModel.logout();
+}
+
+
 
 Widget _buildProfileButton(BuildContext context, AuthModel authModel) {
   return Padding(
@@ -137,7 +146,7 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
             icon: Icons.exit_to_app,
             title: 'Cerrar Sesión',
             onTap: () {
-              // Aquí puedes agregar lógica para cerrar sesión
+              _logout(context);
               Navigator.pop(context);
             },
             isDestructive: true,
