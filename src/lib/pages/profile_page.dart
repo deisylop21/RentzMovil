@@ -9,6 +9,7 @@ import '../models/auth_model.dart';
 import '../models/profile_model.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bottom_navigation_bar_widget.dart'; //import del widget
+//revisar colores
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -392,10 +393,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         title: Text(
           "Mi Perfil",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTheme.titleStyle.copyWith(color: Colors.white),//1
         ),
         centerTitle: true,
         elevation: 0,

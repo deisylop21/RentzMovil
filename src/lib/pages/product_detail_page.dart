@@ -8,7 +8,6 @@ import 'dart:io' show Platform;
 import '../models/auth_model.dart';
 import '../theme/app_theme.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../widgets/quantity_selector.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final int productId;
@@ -26,12 +25,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   final CartApi cartApi = CartApi();
   final PageController _pageController = PageController();
   final ProductApi productApi = ProductApi();
-  Product? _product;
 
   Future<void> _shareProduct(Product product) async {
     if (!Platform.isAndroid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Compartir solo está disponible en Android'),
           backgroundColor: Colors.red,
         ),
@@ -85,7 +83,7 @@ Ver producto: $productUrl
   Widget _buildImageSlider(Product product) {
     return Stack(
       children: [
-        SizedBox(
+        Container(
           height: 350,
           child: PageView.builder(
             controller: _pageController,
@@ -148,69 +146,20 @@ Ver producto: $productUrl
     );
   }
 
-  Future<void> _handleAddToCart(AuthModel authModel) async {
-    if (authModel.token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Inicia sesión para usar el Carrito",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    try {
-      setState(() => isLoading = true);
-      await cartApi.addToCart(
-        authModel.token!,
-        _product!.idProducto,
-        cantidad,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "¡Producto añadido al carrito!",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Error: $e",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final authModel = Provider.of<AuthModel>(context, listen: false);
 
     return FutureBuilder<Product>(
-      future: _product == null ? productApi.fetchProductDetails(widget.productId) : Future.value(_product),
+      future: productApi.fetchProductDetails(widget.productId),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && _product == null) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color(0xFF00345E),
+              backgroundColor: Color(0xFF00345E),
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -225,10 +174,10 @@ Ver producto: $productUrl
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color(0xFF00345E),
+              backgroundColor: Color(0xFF00345E),
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -236,13 +185,13 @@ Ver producto: $productUrl
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 60, color: Colors.red),
-                  const SizedBox(height: 16),
-                  const Text(
+                  Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text(
                     "Error al cargar el producto",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     snapshot.error.toString(),
                     textAlign: TextAlign.center,
@@ -257,10 +206,10 @@ Ver producto: $productUrl
         if (!snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color(0xFF00345E),
+              backgroundColor: Color(0xFF00345E),
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -273,22 +222,21 @@ Ver producto: $productUrl
           );
         }
 
-        _product = snapshot.data!;
-        final product = _product!;
+        final product = snapshot.data!;
 
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF00345E),
+            backgroundColor: Color(0xFF00345E),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
               IconButton(
                 icon: _isSharing
-                    ? const SizedBox(
+                    ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -296,8 +244,10 @@ Ver producto: $productUrl
                     strokeWidth: 2,
                   ),
                 )
-                    : const Icon(Icons.share_outlined, color: Colors.white),
-                onPressed: _isSharing ? null : () => _shareProduct(product),
+                    : Icon(Icons.share_outlined, color: Colors.white),
+                onPressed: _isSharing
+                    ? null
+                    : () => _shareProduct(product),
               ),
             ],
           ),
@@ -310,14 +260,14 @@ Ver producto: $productUrl
                     children: [
                       _buildImageSlider(product),
                       Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 4,
                                   ),
@@ -336,16 +286,16 @@ Ver producto: $productUrl
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             Text(
                               product.nombreProducto,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Text(
                               "\$${product.esPromocion && product.precioPromocion != null ? product.precioPromocion : product.precio}",
                               style: TextStyle(
@@ -354,8 +304,8 @@ Ver producto: $productUrl
                                 color: AppTheme.primaryColor,
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            const Text(
+                            SizedBox(height: 16),
+                            Text(
                               "Descripción",
                               style: TextStyle(
                                 fontSize: 18,
@@ -363,7 +313,7 @@ Ver producto: $productUrl
                                 color: Colors.black87,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Text(
                               product.descripcion,
                               style: TextStyle(
@@ -380,40 +330,113 @@ Ver producto: $productUrl
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
-                      offset: const Offset(0, -5),
+                      offset: Offset(0, -5),
                     ),
                   ],
                 ),
                 child: Row(
                   children: [
-                    QuantitySelector(
-                      initialValue: cantidad,
-                      onChanged: (value) {
-                        setState(() {
-                          cantidad = value;
-                        });
-                      },
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            onPressed: cantidad > 1
+                                ? () => setState(() => cantidad--)
+                                : null,
+                            color: AppTheme.primaryColor,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              cantidad.toString(),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () => setState(() => cantidad++),
+                            color: AppTheme.primaryColor,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: isLoading ? null : () => _handleAddToCart(authModel),
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                          if (authModel.token == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Inicia sesión para usar el Carrito",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            return;
+                          }
+
+                          try {
+                            setState(() => isLoading = true);
+                            await cartApi.addToCart(
+                              authModel.token!,
+                              product.idProducto,
+                              cantidad,
+                            );
+                            setState(() => isLoading = false);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "¡Producto añadido al carrito!",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          } catch (e) {
+                            setState(() => isLoading = false);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Error: $e",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
@@ -421,7 +444,7 @@ Ver producto: $productUrl
                             strokeWidth: 2,
                           ),
                         )
-                            : const Text(
+                            : Text(
                           "Añadir al carrito",
                           style: TextStyle(
                             fontSize: 16,

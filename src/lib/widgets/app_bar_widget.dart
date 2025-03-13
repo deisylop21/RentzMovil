@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import '../models/auth_model.dart';
 import '../widgets/search_bar_widget.dart';
 import '../theme/app_theme.dart';
+import '../pages/profile_page.dart';
+import '../models/auth_model.dart';
 
 PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, ValueChanged<String> onSearchChanged) {
   return AppBar(
@@ -16,8 +18,8 @@ PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, Value
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color(0xFF00345E),
-            Color(0xFF00345E),
+            AppTheme.primaryColor, // Usamos el color primario del tema
+            AppTheme.primaryColor, // Usamos el color secundario del tema
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -29,7 +31,7 @@ PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, Value
     ],
     elevation: 0,
     scrolledUnderElevation: 2,
-    shadowColor: Colors.black.withOpacity(0.3),
+    shadowColor: AppTheme.darkTurquoise.withOpacity(0.3), // Usamos el color turquesa oscuro
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         bottom: Radius.circular(16),
@@ -37,7 +39,6 @@ PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, Value
     ),
   );
 }
-
 
 Widget _buildProfileButton(BuildContext context, AuthModel authModel) {
   return Padding(
@@ -51,12 +52,12 @@ Widget _buildProfileButton(BuildContext context, AuthModel authModel) {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.white,
+            color: AppTheme.secondaryColor, // Usamos el color secundario del tema
             width: 2,
           ),
         ),
         child: CircleAvatar(
-          backgroundColor: Colors.white24,
+          backgroundColor: AppTheme.accentColor.withOpacity(0.4), // Usamos el color de acento
           child: Text(
             authModel.user?.nombre?.substring(0, 1).toUpperCase() ?? 'U',
             style: TextStyle(
@@ -75,6 +76,10 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
     context: context,
     builder: (context) => Container(
       padding: EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundColor, // Usamos el color de fondo del tema
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -83,13 +88,13 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
             height: 4,
             margin: EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.lightTurquoise.withOpacity(0.5), // Usamos el color turquesa claro
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           ListTile(
             leading: CircleAvatar(
-              backgroundColor: Color(0xFF00345E),
+              backgroundColor: AppTheme.primaryColor, // Usamos el color primario del tema
               child: Text(
                 authModel.user?.nombre?.substring(0, 1).toUpperCase() ?? 'U',
                 style: TextStyle(color: Colors.white),
@@ -101,11 +106,22 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
             ),
             subtitle: Text(authModel.user?.correo ?? ''),
           ),
-          Divider(),
+          Divider(color: AppTheme.darkTurquoise), // Usamos el color turquesa oscuro
           _buildMenuOption(
             icon: Icons.person_outline,
             title: 'Mi Perfil',
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              if (authModel.isAuthenticated) {
+                // Si está autenticado, navegar a la página de perfil
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
+              } else {
+                // Si no está autenticado, ir al login
+                Navigator.pushNamed(context, '/login');
+              }
+            },
           ),
           _buildMenuOption(
             icon: Icons.favorite_border,
@@ -120,7 +136,10 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
           _buildMenuOption(
             icon: Icons.exit_to_app,
             title: 'Cerrar Sesión',
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              // Aquí puedes agregar lógica para cerrar sesión
+              Navigator.pop(context);
+            },
             isDestructive: true,
           ),
         ],
@@ -141,12 +160,12 @@ Widget _buildMenuOption({
   return ListTile(
     leading: Icon(
       icon,
-      color: isDestructive ? Colors.red : Color(0xFF043C87),
+      color: isDestructive ? AppTheme.errorColor : AppTheme.primaryColor, // Usamos el color primario o error
     ),
     title: Text(
       title,
       style: TextStyle(
-        color: isDestructive ? Colors.red : Colors.black87,
+        color: isDestructive ? AppTheme.errorColor : Colors.black87, // Usamos el color primario o error
         fontWeight: FontWeight.w500,
       ),
     ),

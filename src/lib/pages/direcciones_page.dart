@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../widgets/direccion_card.dart';
 import '../widgets/empty_stated.dart';
 import '../widgets/nueva_direccion_form.dart';
+import '../theme/app_theme.dart';
 
 class DireccionesPage extends StatefulWidget {
   @override
@@ -33,7 +34,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.backgroundColor,
       builder: (context) => NuevaDireccionForm(
         onDireccionAgregada: _cargarDirecciones,
       ),
@@ -56,7 +57,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
         title: Text(
           "Mis Direcciones",
           style: TextStyle(
-            color: Colors.white,
+            color: AppTheme.White,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -68,7 +69,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.grey[50]!, Colors.white],
+            colors: [AppTheme.White, AppTheme.White],
           ),
         ),
         child: FutureBuilder<List<Direccion>>(
@@ -107,8 +108,8 @@ class _DireccionesPageState extends State<DireccionesPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _agregarDireccion,
         child: Icon(Icons.add_location_alt, size: 24),
-        backgroundColor: AppTheme.secondaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppTheme.accentColor,
+        foregroundColor: AppTheme.White,
         elevation: 4,
         mini: true,
         shape: RoundedRectangleBorder(
@@ -123,7 +124,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red),
+          Icon(Icons.error_outline, size: 64, color: AppTheme.errorColor),
           SizedBox(height: 16),
           Text(
             "Error al cargar las direcciones",
@@ -133,7 +134,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
           Text(
             error,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(color: AppTheme.primaryColor),
           ),
           SizedBox(height: 24),
           ElevatedButton.icon(
@@ -142,7 +143,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
             label: Text("Reintentar"),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.White,
             ),
           ),
         ],

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Colores principales
-  static const Color primaryColor = Color(0xFF00345E);    // Azul oscuro
-  static const Color secondaryColor = Color(0xFFD9B03A);  // Dorado
-  static const Color accentColor = Color(0xFF007983);     // Verde azulado
-  static const Color darkTurquoise = Color(0xFF00808A);   // Turquesa oscuro
-  static const Color lightTurquoise = Color(0xFF00AEA3);  // Turquesa claro
-  static const Color errorColor = Colors.red;
-  static const Color backgroundColor = Colors.white;
+  static const Color primaryColor = Color(0xFF2E3B4E);    // Azul más profundo y elegante
+  static const Color secondaryColor = Color(0xFFD4AF37);  // Dorado más sofisticado
+  static const Color accentColor = Color(0xFF58B09C);    // Verde azulado más equilibrado
+  static const Color darkTurquoise = Color(0xFF3E4A5C);   // Turquesa oscuro más sutil
+  static const Color lightTurquoise = Color(0xFFF5F5F0);  // Turquesa claro más vibrante
+  static const Color errorColor = Color(0xFFCB6D6D);     // Rojo Material 3 estándar
+  static const Color backgroundColor = Color(0xFFFAFAFA); // Blanco cálido para mejor contraste
+  static const Color White = Color(0xFFFFFFFF);
+  static const Color successColor = Color(0xFF4CAF50);
+
 
   // Estilos de texto
   static const TextStyle titleStyle = TextStyle(

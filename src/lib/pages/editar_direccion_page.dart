@@ -67,7 +67,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, complete los campos obligatorios primero'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -91,7 +91,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Ubicación validada correctamente'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppTheme.successColor,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -103,7 +103,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, valide la ubicación primero'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -135,7 +135,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Dirección actualizada correctamente"),
-            backgroundColor: Colors.green,
+            backgroundColor: AppTheme.successColor,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -145,7 +145,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Error al actualizar la dirección: ${e.toString()}"),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.errorColor,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -176,7 +176,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
             message: "Campo opcional",
             child: Icon(
               Icons.info_outline,
-              color: Colors.grey,
+              color: AppTheme.primaryColor,
               size: 20,
             ),
           )
@@ -194,7 +194,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
             borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
           ),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.White,
         ),
         validator: validator,
         keyboardType: keyboardType,
@@ -221,14 +221,14 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
     title: Text(
     "Editar Dirección",
     style: TextStyle(
-    color: Colors.white,
+    color: AppTheme.White,
     fontWeight: FontWeight.bold,
     ),
     ),
     centerTitle: true,
     elevation: 0,
     leading: IconButton(
-    icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+    icon: Icon(Icons.arrow_back_ios, color: AppTheme.White),
     onPressed: () => Navigator.pop(context),
     ),
     ),
@@ -238,8 +238,8 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-    Colors.grey[50]!,
-    Colors.white,
+    AppTheme.White,
+    AppTheme.White,
     ],
     ),
     ),
@@ -322,9 +322,9 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
               icon: Icon(_locationValidated ? Icons.check_circle : Icons.map),
               label: Text(_locationValidated ? "Ubicación validada" : "Validar ubicación"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _locationValidated ? Colors.green : AppTheme.accentColor,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: _locationValidated ? AppTheme.successColor : AppTheme.darkTurquoise,
+                foregroundColor: AppTheme.White,
+                padding: EdgeInsets.symmetric(horizontal: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -343,7 +343,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
                 "Esta será tu dirección principal",
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: AppTheme.primaryColor,
                 ),
               ),
               value: direccionPrioritaria,
@@ -363,7 +363,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
         onPressed: _isLoading ? null : _guardarCambios,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,
-          foregroundColor: Colors.white,
+          foregroundColor: AppTheme.White,
           padding: EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -375,7 +375,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
           height: 20,
           width: 20,
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
             strokeWidth: 2,
           ),
         )

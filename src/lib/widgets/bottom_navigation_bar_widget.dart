@@ -3,8 +3,14 @@ import '../pages/cart_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/rentas_page.dart';
 import '../models/auth_model.dart';
+import '../theme/app_theme.dart';
 
 Widget buildBottomNavigationBar(BuildContext context, AuthModel authModel, {int currentIndex = 0}) {
+  // Asegurarse de que currentIndex esté dentro del rango permitido
+  if (currentIndex < 0 || currentIndex > 2) {
+    currentIndex = 0;
+  }
+
   return BottomNavigationBar(
     currentIndex: currentIndex,
     onTap: (index) {
@@ -27,22 +33,10 @@ Widget buildBottomNavigationBar(BuildContext context, AuthModel authModel, {int 
             MaterialPageRoute(builder: (context) => CartPage()),
           );
         }
-      } else if (index == 3) {
-        // Acción para ir al perfil
-        if (authModel.isAuthenticated) {
-          if (currentIndex != 3) {  // Solo navegar si no estamos ya en el perfil
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-          }
-        } else {
-          Navigator.pushNamed(context, '/login');
-        }
       }
     },
     backgroundColor: Colors.white,
-    selectedItemColor: Color(0xFF043C87),
+    selectedItemColor: AppTheme.primaryColor,
     unselectedItemColor: Colors.grey,
     items: [
       BottomNavigationBarItem(

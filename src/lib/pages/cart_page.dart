@@ -6,6 +6,7 @@ import '../api/cart_api.dart';
 import '../models/auth_model.dart';
 import '../models/cart_model.dart';
 import '../widgets/bottom_navigation_bar_widget.dart';
+import '../theme/app_theme.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -55,7 +56,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
             content: Text("Debes iniciar sesión para usar el carrito"),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            backgroundColor: Theme.of(context).colorScheme.error,
+            backgroundColor: AppTheme.errorColor,
           ),
         );
         Navigator.pop(context);
@@ -117,7 +118,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
           SnackBar(
             content: Text("Error al actualizar el carrito: $e"),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Theme.of(context).colorScheme.error,
+            backgroundColor: AppTheme.errorColor,
           ),
         );
       }
@@ -156,7 +157,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
         SnackBar(
           content: Text("Error al actualizar la cantidad: $e"),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.error,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     }
@@ -182,7 +183,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
         SnackBar(
           content: Text("Producto eliminado del carrito"),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.green,
+          backgroundColor: AppTheme.successColor,
           action: SnackBarAction(
             label: 'DESHACER',
             textColor: Colors.white,
@@ -205,7 +206,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
         SnackBar(
           content: Text("Error al eliminar el producto: $e"),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.error,
+            backgroundColor: AppTheme.errorColor
         ),
       );
     }
@@ -219,7 +220,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,//
-          title: Text("Carrito de Compras"),
+          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: Colors.white)),
           elevation: 0,
         ),
         body: Center(
@@ -230,17 +231,12 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
               SizedBox(height: 16),
               Text(
                 "Debes iniciar sesión para ver el carrito",
-                style: theme.textTheme.titleLarge,
+                style: AppTheme.titleStyle,
               ),
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => Navigator.pushNamed(context, '/login'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
+                style: AppTheme.primaryButtonStyle,
                 child: Text("Iniciar Sesión"),
               ),
             ],
@@ -253,7 +249,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,//
-          title: Text("Carrito de Compras"),
+          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: Colors.white)),
           elevation: 0,
         ),
         body: Center(child: CircularProgressIndicator()),
@@ -263,7 +259,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,//
-        title: Text("Carrito de Compras"),
+        title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: Colors.white)),
         elevation: 0,
         actions: [
           IconButton(
@@ -309,25 +305,20 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
             SizedBox(height: 24),
             Text(
               "Tu carrito está vacío",
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: AppTheme.titleStyle,
             ),
             SizedBox(height: 16),
             Text(
               "Parece que aún no has añadido productos a tu carrito",
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+              style: AppTheme.titleStyle,
             ),
             SizedBox(height: 32),
             ElevatedButton.icon(
               icon: Icon(Icons.shopping_bag_outlined),
               label: Text("Explorar Productos"),
               onPressed: () => Navigator.pushNamed(context, '/products'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
+              style: AppTheme.primaryButtonStyle,
             ),
           ],
         ),
@@ -340,7 +331,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       children: [
         if (_isLoading)
           LinearProgressIndicator(
-            backgroundColor: Colors.transparent,
+              backgroundColor: AppTheme.errorColor
           ),
         Expanded(
           child: ListView.builder(
@@ -384,7 +375,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
         children: [
           SlidableAction(
             onPressed: (_) => _deleteItem(item.idCarrito, index),
-            backgroundColor: colorScheme.error,
+            backgroundColor: AppTheme.errorColor,
             foregroundColor: Colors.white,
             icon: Icons.delete,
             label: 'Eliminar',
@@ -444,18 +435,14 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                           children: [
                             Text(
                               item.nombreProducto,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: AppTheme.titleStyle,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 4),
                             Text(
                               item.descripcion,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: Colors.black54,
-                              ),
+                              style: AppTheme.titleStyle,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -479,11 +466,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                           if (item.esPromocion && item.precioPromocion != null) ...[
                             Text(
                               "Precio original: \$${item.precio}",
-                              style: TextStyle(
-                                decoration: TextDecoration.lineThrough,
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
+                                style: AppTheme.priceStyle,
                             ),
                             SizedBox(height: 4),
                             Row(
@@ -506,21 +489,14 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                                 SizedBox(width: 6),
                                 Text(
                                   "\$${item.precioPromocion}",
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+                                  style: AppTheme.promotionalPriceStyle,
                                 ),
                               ],
                             ),
                           ] else
                             Text(
                               "\$${item.precio}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                              style: AppTheme.priceStyle,
                             ),
                         ],
                       ),
@@ -570,7 +546,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: item.esPromocion ? Colors.green : theme.colorScheme.primary,
+                          color: item.esPromocion ? AppTheme.secondaryColor : AppTheme.primaryColor, //antes era secundary
                         ),
                       ),
                     ],
@@ -587,13 +563,8 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                           arguments: item,
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                      style: AppTheme.primaryButtonStyle,
                       ),
-                    ),
                   ),
                 ],
               ),
@@ -656,7 +627,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                   "\$${_totalPrice.toStringAsFixed(2)}",
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: AppTheme.primaryColor,
                   ),
                 ),
               ],
@@ -669,12 +640,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                   // Redirigir a la página de checkout
                   Navigator.of(context).pushNamed('/checkout');
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+                style: AppTheme.primaryButtonStyle,
                 child: Text(
                   "Proceder al Pago",
                   style: TextStyle(
