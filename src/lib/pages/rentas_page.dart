@@ -83,9 +83,9 @@ class _RentasPageState extends State<RentasPage> {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
                           Icon(Icons.image_not_supported, size: 80,
-                              color: Colors.grey),
+                              color: AppTheme.grey),
                     )
-                        : Icon(Icons.image, size: 80, color: Colors.grey),
+                        : Icon(Icons.image, size: 80, color: AppTheme.grey),
                   ),
                   SizedBox(width: 16),
                   Expanded(
@@ -105,7 +105,7 @@ class _RentasPageState extends State<RentasPage> {
                           "Estado: ${renta.estado}",
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: AppTheme.grey,
                           ),
                         ),
                       ],
@@ -123,7 +123,7 @@ class _RentasPageState extends State<RentasPage> {
                     "Total:",
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[600],
+                      color: AppTheme.grey,
                     ),
                   ),
                   Text(
@@ -149,11 +149,11 @@ class _RentasPageState extends State<RentasPage> {
         margin: EdgeInsets.all(20),
         padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.White,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: AppTheme.black.withOpacity(0.05),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
@@ -173,7 +173,7 @@ class _RentasPageState extends State<RentasPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[800],
+                color: AppTheme.grey,
                 height: 1.5,
               ),
             ),
@@ -184,7 +184,7 @@ class _RentasPageState extends State<RentasPage> {
               label: Text("Reintentar"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
+                foregroundColor: AppTheme.White,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -228,7 +228,7 @@ class _RentasPageState extends State<RentasPage> {
             "Tus rentas aparecerán aquí",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey[600],
+              color: AppTheme.grey,
             ),
           ),
           SizedBox(height: 24),
@@ -241,7 +241,7 @@ class _RentasPageState extends State<RentasPage> {
             label: Text("Explorar productos"),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.secondaryColor,
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.White,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -273,7 +273,7 @@ class _RentasPageState extends State<RentasPage> {
         title: Text(
           'Mis Rentas',
           style: TextStyle(
-            color: Colors.white,
+            color: AppTheme.White,
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
@@ -284,7 +284,7 @@ class _RentasPageState extends State<RentasPage> {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: _loadRentas,
-            color: Colors.white,
+            color: AppTheme.White,
           ),
         ],
       ),
@@ -294,8 +294,8 @@ class _RentasPageState extends State<RentasPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.grey[50]!,
-              Colors.white,
+              AppTheme.White,
+              AppTheme.White,
             ],
           ),
         ),

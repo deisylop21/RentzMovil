@@ -186,7 +186,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
           backgroundColor: AppTheme.successColor,
           action: SnackBarAction(
             label: 'DESHACER',
-            textColor: Colors.white,
+            textColor: AppTheme.White,
             onPressed: () {
               // Functionality to add item back would go here
               // This would require an API call to re-add the item
@@ -220,14 +220,14 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,//
-          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: Colors.white)),
+          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: AppTheme.White)),
           elevation: 0,
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
+              Icon(Icons.shopping_cart_outlined, size: 80, color: AppTheme.grey),
               SizedBox(height: 16),
               Text(
                 "Debes iniciar sesión para ver el carrito",
@@ -249,7 +249,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,//
-          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: Colors.white)),
+          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: AppTheme.White)),
           elevation: 0,
         ),
         body: Center(child: CircularProgressIndicator()),
@@ -259,7 +259,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,//
-        title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: Colors.white)),
+        title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: AppTheme.White)),
         elevation: 0,
         actions: [
           IconButton(
@@ -297,10 +297,10 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
             Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.1),
+                color: AppTheme.grey.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
+              child: Icon(Icons.shopping_cart_outlined, size: 80, color: AppTheme.grey),
             ),
             SizedBox(height: 24),
             Text(
@@ -376,7 +376,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
           SlidableAction(
             onPressed: (_) => _deleteItem(item.idCarrito, index),
             backgroundColor: AppTheme.errorColor,
-            foregroundColor: Colors.white,
+            foregroundColor: AppTheme.White,
             icon: Icons.delete,
             label: 'Eliminar',
             borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
@@ -402,20 +402,20 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                 width: double.infinity,
                 placeholder: (context, url) => Container(
                   height: 180,
-                  color: Colors.grey[200],
+                  color: AppTheme.grey,
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
                   height: 180,
-                  color: Colors.grey[200],
+                  color: AppTheme.grey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                      Icon(Icons.image_not_supported, size: 50, color: AppTheme.grey),
                       SizedBox(height: 8),
-                      Text("Imagen no disponible", style: TextStyle(color: Colors.grey)),
+                      Text("Imagen no disponible", style: TextStyle(color: AppTheme.grey)),
                     ],
                   ),
                 ),
@@ -468,13 +468,13 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                                 Container(
                                   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Colors.green,
+                                    color: AppTheme.successColor,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     "OFERTA",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: AppTheme.White,
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -506,7 +506,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                             margin: EdgeInsets.symmetric(horizontal: 8),
                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
+                              border: Border.all(color: AppTheme.successColor),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -572,13 +572,13 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
   Widget _buildQuantityButton({required IconData icon, VoidCallback? onPressed}) {
     return Container(
       decoration: BoxDecoration(
-        color: onPressed == null ? Colors.grey.shade200 : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: onPressed == null ? AppTheme.grey : Theme.of(context).colorScheme.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: IconButton(
         icon: Icon(
           icon,
-          color: onPressed == null ? Colors.grey : Theme.of(context).colorScheme.primary,
+          color: onPressed == null ? AppTheme.grey : Theme.of(context).colorScheme.primary,
           size: 18,
         ),
         onPressed: onPressed,
@@ -597,10 +597,10 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.White,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppTheme.black.withOpacity(0.05),
             blurRadius: 10,
             offset: Offset(0, -3),
           ),

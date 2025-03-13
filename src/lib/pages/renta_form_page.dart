@@ -75,12 +75,12 @@ class _RentaFormPageState extends State<RentaFormPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(mensaje),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        backgroundColor: isError ? AppTheme.errorColor : AppTheme.successColor,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 3),
         action: SnackBarAction(
           label: 'OK',
-          textColor: Colors.white,
+          textColor: AppTheme.White,
           onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
       ),
@@ -105,14 +105,14 @@ class _RentaFormPageState extends State<RentaFormPage> {
             return Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.White,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: AppTheme.black,
                     blurRadius: 10,
                     spreadRadius: 3,
                   ),
@@ -125,7 +125,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back_ios, color: Colors.blueAccent),
+                        icon: Icon(Icons.arrow_back_ios, color: AppTheme.darkTurquoise),
                         onPressed: () {
                           setModalState(() {
                             currentMonth = DateTime(currentMonth.year, currentMonth.month - 1, 1);
@@ -137,11 +137,11 @@ class _RentaFormPageState extends State<RentaFormPage> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
+                          color: AppTheme.darkTurquoise,
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
+                        icon: Icon(Icons.arrow_forward_ios, color: AppTheme.darkTurquoise),
                         onPressed: () {
                           setModalState(() {
                             currentMonth = DateTime(currentMonth.year, currentMonth.month + 1, 1);
@@ -178,20 +178,20 @@ class _RentaFormPageState extends State<RentaFormPage> {
                                 selectedDate == date ? 'assets/images/mesa_seleccionada.png' : 'assets/images/mesa.png',
                                 width: 30,
                                 height: 30,
-                                color: isDisabled ? Colors.grey : null,
+                                color: isDisabled ? AppTheme.grey : null,
                               ),
                               SizedBox(height: 4),
                               AnimatedContainer(
                                 duration: Duration(milliseconds: 300),
                                 decoration: BoxDecoration(
                                   color: selectedDate == date
-                                      ? Colors.blueAccent
+                                      ? AppTheme.darkTurquoise
                                       : isDisabled
-                                      ? Colors.grey.shade300
-                                      : Colors.white,
+                                      ? AppTheme.grey
+                                      : AppTheme.White,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: selectedDate == date ? Colors.blueAccent : Colors.grey.shade400,
+                                    color: selectedDate == date ? AppTheme.darkTurquoise : AppTheme.grey,
                                     width: 2,
                                   ),
                                 ),
@@ -204,10 +204,10 @@ class _RentaFormPageState extends State<RentaFormPage> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: isDisabled
-                                        ? Colors.grey
+                                        ? AppTheme.grey
                                         : selectedDate == date
-                                        ? Colors.white
-                                        : Colors.black,
+                                        ? AppTheme.White
+                                        : AppTheme.black,
                                   ),
                                 ),
                               ),
@@ -352,7 +352,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
                   if (loadingProgress == null) return child;
                   return Container(
                     height: 200,
-                    color: Colors.grey[200],
+                    color: AppTheme.grey,
                     child: Center(
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
@@ -365,15 +365,15 @@ class _RentaFormPageState extends State<RentaFormPage> {
                 },
                 errorBuilder: (_, __, ___) => Container(
                   height: 200,
-                  color: Colors.grey[200],
+                  color: AppTheme.grey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline, size: 50, color: Colors.grey[600]),
+                      Icon(Icons.error_outline, size: 50, color: AppTheme.grey),
                       const SizedBox(height: 8),
                       Text(
                         'Error al cargar la imagen',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(color: AppTheme.grey),
                       ),
                     ],
                   ),
@@ -391,7 +391,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Costo de envío:", style: TextStyle(color: Colors.grey[600])),
+                Text("Costo de envío:", style: TextStyle(color: AppTheme.grey)),
                 const Text("\$50.00"),
               ],
             ),
@@ -459,7 +459,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
                       ),
                       hintText: "Selecciona una dirección",
                       filled: true,
-                      fillColor: Colors.grey[100],
+                      fillColor: AppTheme.grey,
                     ),
                     onChanged: (Direccion? nuevaDireccion) {
                       setState(() => direccionSeleccionada = nuevaDireccion);
@@ -500,7 +500,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
         const Icon(
           Icons.location_off,
           size: 48,
-          color: Colors.grey,
+          color: AppTheme.grey,
         ),
         const SizedBox(height: 8),
         const Text(
@@ -554,7 +554,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _seleccionarFecha,
-              icon: Icon(Icons.calendar_today, color: Colors.white),
+              icon: Icon(Icons.calendar_today, color: AppTheme.White),
               label: fechaInicio == null
                   ? Text("Seleccionar Fecha de Inicio")
                   : Column(
@@ -606,7 +606,7 @@ class _RentaFormPageState extends State<RentaFormPage> {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
                     strokeWidth: 2,
                   ),
                 ),
