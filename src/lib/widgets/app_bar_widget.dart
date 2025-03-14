@@ -8,9 +8,9 @@ import '../pages/profile_page.dart';
 
 PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, ValueChanged<String> onSearchChanged) {
   return AppBar(
-    toolbarHeight: 70.0,
+    toolbarHeight: 70.0, // Aumentado ligeramente
     automaticallyImplyLeading: false,
-    titleSpacing: 0,
+    titleSpacing: 0, // Elimina el espacio predeterminado alrededor del título
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
@@ -19,7 +19,7 @@ PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, Value
     leading: Padding(
       padding: const EdgeInsets.only(left: 8.0),
       child: IconButton(
-        icon: Icon(Icons.notifications, color: AppTheme.White),
+        icon: Icon(Icons.notifications, color: Colors.white),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('No tienes notificaciones nuevas.')),
@@ -82,7 +82,7 @@ Widget _buildProfileButton(BuildContext context, AuthModel authModel) {
           child: Text(
             authModel.user?.nombre?.substring(0, 1).toUpperCase() ?? 'U',
             style: TextStyle(
-              color: AppTheme.White,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -118,7 +118,7 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
               backgroundColor: AppTheme.primaryColor,
               child: Text(
                 authModel.user?.nombre?.substring(0, 1).toUpperCase() ?? 'U',
-                style: TextStyle(color: AppTheme.White),
+                style: TextStyle(color: Colors.white),
               ),
             ),
             title: Text(

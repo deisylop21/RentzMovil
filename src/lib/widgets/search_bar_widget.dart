@@ -11,11 +11,11 @@ class SearchBarWidget extends StatelessWidget {
       height: 40,
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: AppTheme.White,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -26,20 +26,20 @@ class SearchBarWidget extends StatelessWidget {
         child: TextFormField(
           style: TextStyle(
             fontSize: 15,
-            color: AppTheme.black,
+            color: Colors.black87,
           ),
           decoration: InputDecoration(
             isDense: true,
             filled: true,
-            fillColor: AppTheme.White,
+            fillColor: Colors.white,
             hintText: 'Buscar en Rentz',
             hintStyle: TextStyle(
-              color: AppTheme.grey,
+              color: Colors.grey[400],
               fontSize: 15,
             ),
             prefixIcon: Icon(
               Icons.search_rounded,
-              color: AppTheme.grey,
+              color: Colors.grey[600],
               size: 20,
             ),
             prefixIconConstraints: BoxConstraints(
