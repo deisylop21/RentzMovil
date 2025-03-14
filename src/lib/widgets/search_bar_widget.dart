@@ -8,52 +8,49 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 40,
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        color: AppTheme.White,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
+            color: AppTheme.black.withOpacity(0.1),
+            blurRadius: 4,
             offset: Offset(0, 2),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(20),
         child: TextFormField(
           style: TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
+            fontSize: 15,
+            color: AppTheme.black,
           ),
           decoration: InputDecoration(
+            isDense: true,
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppTheme.White,
             hintText: 'Buscar en Rentz',
             hintStyle: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 16,
+              color: AppTheme.grey,
+              fontSize: 15,
             ),
-            prefixIcon: Container(
-              padding: EdgeInsets.all(12),
-              child: Icon(
-                Icons.search_rounded,
-                color: Colors.grey[600],
-                size: 24,
-              ),
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: AppTheme.grey,
+              size: 20,
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
+            prefixIconConstraints: BoxConstraints(
+              minWidth: 40,
+              minHeight: 40,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
-            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(20),
               borderSide: BorderSide(
                 color: Theme.of(context).primaryColor,
                 width: 1.5,
