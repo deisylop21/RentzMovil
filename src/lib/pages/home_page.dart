@@ -3,12 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../api/product_api.dart';
 import '../api/rentadora_api.dart';
-import '../widgets/product_card.dart';
 import '../models/auth_model.dart';
 import '../models/product_model.dart';
 import '../models/rentadora_model.dart';
 import '../widgets/app_bar_widget.dart';
-import '../widgets/search_bar_widget.dart';
 import '../widgets/bottom_navigation_bar_widget.dart';
 import '../theme/app_theme.dart';
 import '../widgets/category_filters.dart';
@@ -17,7 +15,6 @@ import '../widgets/error_state.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/product_section.dart';
 import '../widgets/rentadoras_carousel.dart';
-import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,7 +25,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   final ProductApi productApi = ProductApi();
   final RentadoraApi rentadoraApi = RentadoraApi();
   List<Product> _products = [];
-  Map<String, List<Product>> _categorizedProducts = {};
   String _searchQuery = '';
   bool _isLoading = true;
   String? _error;
@@ -66,7 +62,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         _error = null;
       });
 
-      // Fetch products and rentadoras in parallel for better performance
       final productsResult = productApi.fetchProducts();
       final rentadorasResult = rentadoraApi.fetchRentadoras();
 
@@ -76,7 +71,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       if (mounted) {
         setState(() {
           _products = products;
-          _categorizedProducts = _groupByCategory(products);
           _rentadoras = rentadoras;
           _isLoading = false;
         });
@@ -92,24 +86,36 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     }
   }
 
-  Map<String, List<Product>> _groupByCategory(List<Product> products) {
-    Map<String, List<Product>> categorized = {};
-    for (var product in products) {
-      if (product.categoria.isEmpty) continue;
-      if (!categorized.containsKey(product.categoria)) {
-        categorized[product.categoria] = [];
-      }
-      categorized[product.categoria]!.add(product);
+  List<Product> _filterProducts(String query, String? category) {
+    List<Product> filtered = _products;
+
+    if (category != null) {
+      filtered = filtered.where((product) =>
+      product.categoria == category
+      ).toList();
     }
-    return Map.fromEntries(
-      categorized.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
-    );
+
+    if (query.isNotEmpty) {
+      final searchLower = query.toLowerCase();
+      filtered = filtered.where((product) =>
+      product.nombreProducto.toLowerCase().contains(searchLower) ||
+          product.categoria.toLowerCase().contains(searchLower) ||
+          product.descripcion.toLowerCase().contains(searchLower)
+      ).toList();
+    }
+
+    return filtered;
   }
 
+  Set<String> _getCategories() {
+    return _products.map((product) => product.categoria).toSet();
+  }
   @override
   Widget build(BuildContext context) {
     final authModel = Provider.of<AuthModel>(context);
     final theme = Theme.of(context);
+    final filteredProducts = _filterProducts(_searchQuery, _selectedCategory);
+    final categories = _getCategories();
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -119,18 +125,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             (query) {
           setState(() {
             _searchQuery = query;
-            if (query.isEmpty) {
-              _categorizedProducts = _groupByCategory(_products);
-            } else {
-              _categorizedProducts = _groupByCategory(
-                _products.where((product) {
-                  final searchLower = query.toLowerCase();
-                  return product.nombreProducto.toLowerCase().contains(searchLower) ||
-                      product.categoria.toLowerCase().contains(searchLower) ||
-                      product.descripcion.toLowerCase().contains(searchLower);
-                }).toList(),
-              );
-            }
           });
         },
       ),
@@ -150,12 +144,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // Welcome header (if authenticated)
-              if (authModel.isAuthenticated)
-                SliverToBoxAdapter(
-
-                ),
-
               // Category filters
               SliverToBoxAdapter(
                 child: Padding(
@@ -170,25 +158,39 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
               SliverToBoxAdapter(
-                child: CategoryFilters(
-                  categorizedProducts: _categorizedProducts,
-                  selectedCategory: _selectedCategory,
-                  onCategorySelected: (category) {
-                    setState(() {
-                      _selectedCategory = category;
-                      if (category == null) {
-                        _categorizedProducts = _groupByCategory(_products);
-                      } else {
-                        _categorizedProducts = _groupByCategory(
-                          _products.where((product) => product.categoria == category).toList(),
-                        );
-                      }
-                    });
-                  },
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      FilterChip(
+                        label: Text('Todos'),
+                        selected: _selectedCategory == null,
+                        onSelected: (selected) {
+                          setState(() {
+                            _selectedCategory = null;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ...categories.map((category) => Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: FilterChip(
+                          label: Text(category),
+                          selected: _selectedCategory == category,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedCategory = selected ? category : null;
+                            });
+                          },
+                        ),
+                      )).toList(),
+                    ],
+                  ),
                 ),
               ),
 
-              // Rentadoras carousel (moved below categories)
+              // Rentadoras section
               if (_rentadoras.isNotEmpty)
                 SliverToBoxAdapter(
                   child: Column(
@@ -209,7 +211,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                 ),
 
-              // Products by category
+              // Products section title
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
@@ -222,18 +224,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                 ),
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final category = _categorizedProducts.keys.elementAt(index);
-                    final products = _categorizedProducts[category]!;
-                    return ProductSection(products: products);
-                  },
-                  childCount: _categorizedProducts.length,
-                ),
-              ),
-              // Add some padding at the bottom
+
+              // Products list
               SliverToBoxAdapter(
+                child: ProductSection(products: filteredProducts),
+              ),
+
+              // Bottom padding
+              const SliverToBoxAdapter(
                 child: SizedBox(height: 24),
               ),
             ],
@@ -246,7 +244,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         onPressed: _scrollToTop,
         backgroundColor: AppTheme.primaryColor,
         child: const Icon(Icons.arrow_upward, color: Colors.white),
-        // Add elevation and shape for better visibility
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -256,7 +253,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       bottomNavigationBar: buildBottomNavigationBar(context, authModel),
     );
   }
-
 
   void _scrollListener() {
     if (_scrollController.offset >= 400) {
