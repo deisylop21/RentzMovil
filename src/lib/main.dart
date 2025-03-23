@@ -15,6 +15,7 @@ import 'models/auth_model.dart';
 import 'models/cart_model.dart';
 import 'theme/app_theme.dart';
 import 'services/notification_service.dart';
+import 'pages/recovery_page.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -212,6 +213,11 @@ class _MyAppState extends State<MyApp> {
           case '/direcciones':
             return MaterialPageRoute(
               builder: (_) => DireccionesPage(),
+              settings: settings,
+            );
+          case '/recovery':
+            return MaterialPageRoute(
+              builder: (_) => RecoveryPage(),
               settings: settings,
             );
           case '/product-detail':

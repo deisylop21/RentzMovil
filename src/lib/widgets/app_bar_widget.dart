@@ -6,6 +6,7 @@ import '../widgets/search_bar_widget.dart';
 import '../theme/app_theme.dart';
 import '../pages/profile_page.dart';
 import '../models/auth_model.dart';
+import '../pages/favorites_pages.dart';
 
 PreferredSizeWidget buildAppBar(BuildContext context, AuthModel authModel, ValueChanged<String> onSearchChanged) {
   return AppBar(
@@ -148,7 +149,13 @@ void _showProfileMenu(BuildContext context, AuthModel authModel) {
           _buildMenuOption(
             icon: Icons.favorite_border,
             title: 'Favoritos',
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              Navigator.pop(context); // Cerrar el modal
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FavoritesPage()),
+              );
+            },
           ),
           _buildMenuOption(
             icon: Icons.settings_outlined,

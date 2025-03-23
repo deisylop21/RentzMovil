@@ -269,6 +269,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextButton(
                           onPressed: () {
                             // Navegación a recuperación de contraseña
+                            Navigator.pushNamed(context, '/recovery');
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: AppTheme.secondaryColor,
