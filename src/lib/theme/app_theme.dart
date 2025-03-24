@@ -12,7 +12,7 @@ class AppTheme {
   static const Color secondaryColorLight = Color(0xFFE67E22); // Warmer orange, more engaging
   static const Color accentColorLight = Color(0xFF3498DB);    // Brighter blue, better contrast
   static const Color darkTurquoiseLight = Color(0xFF34495E);  // Slightly darker shade for depth
-  static const Color lightTurquoiseLight = Color(0xE0C9CBCD); // Subtle blue tint for backgrounds
+  static const Color lightTurquoiseLight = Color(0xFFF5F5F0); // Subtle blue tint for backgrounds
   static const Color errorColorLight = Color(0xFFE74C3C);     // Brighter red for better visibility
   static const Color backgroundColorLight = Color(0xFFF8F9FB); // Slight blue tint for warmth
   static const Color whiteLight = Color(0xFFFFFFFF);          // Pure white

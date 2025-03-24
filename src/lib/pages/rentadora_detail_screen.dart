@@ -70,7 +70,7 @@ class _ExpandableTextState extends State<ExpandableText> {
                 Text(
                   _expanded ? 'Ver menos' : 'Ver más',
                   style: TextStyle(
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.text,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -225,7 +225,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
                   'Productos disponibles',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.text,
                   ),
                 ),
                 Container(
@@ -237,7 +237,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
                   child: Text(
                     '${rentadora.productos?.length ?? 0} productos',
                     style: TextStyle(
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.text,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -264,7 +264,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           child: Text(
             widget.rentadoraNombre,
             style: TextStyle(
-              color: AppTheme.White,
+              color: AppTheme.text,
               fontWeight: FontWeight.bold,
               fontSize: 20,
               shadows: [
@@ -349,11 +349,11 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.White,
+        color: AppTheme.backgroundColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.black.withOpacity(0.05),
+            color: AppTheme.grey.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -385,13 +385,13 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
                 _buildInfoRow(
                   Icons.location_on,
                   'CP: ${rentadora.codigoPostal ?? 'No disponible'}',
-                  AppTheme.grey,
+                  AppTheme.text,
                 ),
                 const SizedBox(height: 4),
                 _buildInfoRow(
                   Icons.access_time,
                   '${rentadora.horarioAbre ?? '00:00'} - ${rentadora.horarioCierra ?? '00:00'}',
-                  AppTheme.grey,
+                  AppTheme.text,
                 ),
               ],
             ),
@@ -452,7 +452,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             text,
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.grey,
+              color: AppTheme.text,
               height: 1.2,  // Mejor espaciado vertical
             ),
             overflow: TextOverflow.ellipsis,  // Manejo de desbordamiento
@@ -468,11 +468,11 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.White,
+        color: AppTheme.backgroundColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.grey,
+            color: AppTheme.grey.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -504,7 +504,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             maxLines: 3,  // Ajustable según necesidades
             style: TextStyle(
               fontSize: 15,
-              color: AppTheme.black,
+              color: AppTheme.text,
               height: 1.4,
               letterSpacing: 0.2,  // Mejor legibilidad
             ),

@@ -97,7 +97,7 @@ class _RentasPageState extends State<RentasPage> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
+                            color: AppTheme.text,
                           ),
                         ),
                         SizedBox(height: 4),
@@ -105,7 +105,7 @@ class _RentasPageState extends State<RentasPage> {
                           "Estado: ${renta.estado}",
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppTheme.grey,
+                            color: AppTheme.text,
                           ),
                         ),
                       ],
@@ -123,7 +123,7 @@ class _RentasPageState extends State<RentasPage> {
                     "Total:",
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppTheme.grey,
+                      color: AppTheme.text,
                     ),
                   ),
                   Text(
@@ -131,7 +131,7 @@ class _RentasPageState extends State<RentasPage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.secondaryColor,
+                      color: AppTheme.accentColor,
                     ),
                   ),
                 ],
@@ -273,7 +273,7 @@ class _RentasPageState extends State<RentasPage> {
         title: Text(
           'Mis Rentas',
           style: TextStyle(
-            color: AppTheme.text,
+            color: AppTheme.White,
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),

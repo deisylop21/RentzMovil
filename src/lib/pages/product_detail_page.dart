@@ -19,6 +19,7 @@ class ProductDetailPage extends StatefulWidget {
   _ProductDetailPageState createState() => _ProductDetailPageState();
 }
 
+
 class _ProductDetailPageState extends State<ProductDetailPage> {
   bool _isSharing = false;
   int cantidad = 1;
