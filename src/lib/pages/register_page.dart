@@ -226,7 +226,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -314,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildForm() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.card,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -478,7 +478,7 @@ class _RegisterPageState extends State<RegisterPage> {
         onPressed: _isLoading ? null : _register,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.white,//
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

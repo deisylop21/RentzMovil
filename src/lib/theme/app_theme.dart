@@ -49,6 +49,11 @@ class AppTheme {
   static Color get grey => _isDarkMode ? greyDark : greyLight;
   static Color get text => _isDarkMode ? textDark : textLight;
   static Color get text2 => _isDarkMode ? textDark : primaryColorLight;
+  static Color get container => _isDarkMode ? backgroundColorDark : whiteLight;
+  static Color get text4 => _isDarkMode ? greyDark : greyLight;
+  static Color get icon => _isDarkMode ? primaryColorDark : primaryColorLight;
+  static Color get text5 => _isDarkMode ? textDark : lightTurquoiseLight;
+  static Color get card => _isDarkMode ? lightTurquoiseDark : whiteLight;
 
   // Estilos de texto dinámicos
   static TextStyle get titleStyle => TextStyle(

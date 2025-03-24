@@ -279,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildInfoCard(IconData icon, String title, String value) {
     return Card(
       elevation: 0,
-      color: Colors.white,
+      color: AppTheme.text5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
@@ -293,12 +293,12 @@ class _ProfilePageState extends State<ProfilePage> {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.text4.withOpacity(0.1),//Detras
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 icon,
-                color: AppTheme.text2,//icono
+                color: AppTheme.icon,//icono
                 size: 24,
               ),
             ),
@@ -489,7 +489,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Container(//este
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppTheme.errorColor, //Hola//checar//
+                color: AppTheme.container, //Hola//checar//
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
