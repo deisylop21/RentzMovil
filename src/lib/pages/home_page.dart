@@ -118,7 +118,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final categories = _getCategories();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.backgroundColor,
       appBar: buildAppBar(
         context,
         authModel,
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     'Categorías',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.text,
                     ),
                   ),
                 ),
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           'Rentadoras destacadas',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
+                            color: AppTheme.text,
                           ),
                         ),
                       ),
@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     'Productos disponibles',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.text,
                     ),
                   ),
                 ),
@@ -243,7 +243,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         mini: true,
         onPressed: _scrollToTop,
         backgroundColor: AppTheme.primaryColor,
-        child: const Icon(Icons.arrow_upward, color: Colors.white),
+        child: Icon(Icons.arrow_upward, color: AppTheme.backgroundColor),
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

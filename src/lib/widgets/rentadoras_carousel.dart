@@ -53,11 +53,11 @@ class RentadorasCarousel extends StatelessWidget {
         width: cardWidth,
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.backgroundColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: AppTheme.lightTurquoise,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -77,7 +77,7 @@ class RentadorasCarousel extends StatelessWidget {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
+                    color: AppTheme.grey,
                     child: const Center(
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
@@ -85,7 +85,7 @@ class RentadorasCarousel extends StatelessWidget {
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[200],
+                    color: AppTheme.grey,
                     child: const Icon(Icons.error),
                   ),
                 ),
@@ -109,19 +109,19 @@ class RentadorasCarousel extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppTheme.backgroundColor,
                         border: Border.all(
-                          color: Colors.white,
+                          color: AppTheme.backgroundColor,
                           width: 0.5,
                         ),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         rentadora.business,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
-                          color: Colors.black87,
+                          color: AppTheme.text,
                         ),
                         maxLines: 2,
                         textAlign: TextAlign.center,

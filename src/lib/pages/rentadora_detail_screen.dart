@@ -197,7 +197,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           curve: Curves.easeOut,
         );
       },
-      child: const Icon(Icons.arrow_upward, color: AppTheme.White),
+      child: Icon(Icons.arrow_upward, color: AppTheme.White),
     );
   }
 
@@ -263,7 +263,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
           opacity: _titleOpacity,
           child: Text(
             widget.rentadoraNombre,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppTheme.White,
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -296,7 +296,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       fit: BoxFit.cover,
       placeholder: (context, url) => Container(
         color: AppTheme.grey,
-        child: const Center(
+        child: Center(
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(AppTheme.White),
           ),
@@ -304,7 +304,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       ),
       errorWidget: (context, url, error) => Container(
         color: AppTheme.primaryColor.withOpacity(0.3),
-        child: const Icon(
+        child: Icon(
           Icons.image_not_supported,
           size: 50,
           color: AppTheme.White,
@@ -319,7 +319,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       child: Center(
         child: Text(
           widget.rentadoraNombre.substring(0, 1).toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 60,
             fontWeight: FontWeight.bold,
             color: AppTheme.White,
@@ -759,7 +759,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               color: AppTheme.White,
             ),
@@ -767,7 +767,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             Expanded(
               child: Text(
                 'Error al cargar los detalles del producto: $error',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppTheme.White,
                   fontSize: 14,
                 ),

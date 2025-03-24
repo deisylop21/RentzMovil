@@ -35,9 +35,9 @@ Widget buildBottomNavigationBar(BuildContext context, AuthModel authModel, {int 
         }
       }
     },
-    backgroundColor: Colors.white,
-    selectedItemColor: AppTheme.primaryColor,
-    unselectedItemColor: Colors.grey,
+    backgroundColor: AppTheme.lightTurquoise,
+    selectedItemColor: AppTheme.text,
+    unselectedItemColor: AppTheme.grey,
     items: [
       BottomNavigationBarItem(
         icon: Icon(Icons.home),

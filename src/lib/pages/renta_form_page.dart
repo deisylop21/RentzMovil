@@ -497,12 +497,12 @@ class _RentaFormPageState extends State<RentaFormPage> {
   Widget _buildNoDireccionesWidget() {
     return Column(
       children: [
-        const Icon(
+        Icon(
           Icons.location_off,
           size: 48,
           color: AppTheme.grey,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         const Text(
           "No hay direcciones registradas",
           style: TextStyle(fontSize: 16),

@@ -263,7 +263,7 @@ class _RentasPageState extends State<RentasPage> {
             gradient: LinearGradient(
               colors: [
                 AppTheme.primaryColor,
-                AppTheme.darkTurquoise,
+                AppTheme.primaryColor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -273,7 +273,7 @@ class _RentasPageState extends State<RentasPage> {
         title: Text(
           'Mis Rentas',
           style: TextStyle(
-            color: AppTheme.White,
+            color: AppTheme.text,
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
@@ -294,8 +294,8 @@ class _RentasPageState extends State<RentasPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppTheme.White,
-              AppTheme.White,
+              AppTheme.backgroundColor,
+              AppTheme.backgroundColor,
             ],
           ),
         ),

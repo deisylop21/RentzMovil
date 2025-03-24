@@ -5,6 +5,7 @@ import '../models/favorite_model.dart';
 import '../api/favorite_api.dart';
 import '../widgets/favorite_card_widget.dart';
 import '../widgets/empty_favorites_widget.dart';
+import '../theme/app_theme.dart'; // Add import for AppTheme
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({Key? key}) : super(key: key);
@@ -61,21 +62,24 @@ class _FavoritesPageState extends State<FavoritesPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Eliminar de favoritos'),
+          title: Text('Eliminar de favoritos', style: AppTheme.titleStyle),
           content: Text(
-              '¿Estás seguro de que deseas eliminar "${favorite.nombreProducto}" de tus favoritos?'
+            '¿Estás seguro de que deseas eliminar "${favorite.nombreProducto}" de tus favoritos?',
+            style: TextStyle(color: AppTheme.text),
           ),
+          backgroundColor: AppTheme.backgroundColor,
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar'),
+              child: Text('Cancelar', style: TextStyle(color: AppTheme.text2)),
             ),
             FilledButton.icon(
               onPressed: () => Navigator.pop(context, true),
               icon: const Icon(Icons.delete_outline),
               label: const Text('Eliminar'),
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: AppTheme.errorColor,
+                foregroundColor: AppTheme.White,
               ),
             ),
           ],
@@ -89,8 +93,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
       setState(() => _favorites.remove(favorite));
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Eliminando de favoritos...'),
+        SnackBar(
+          content: Text('Eliminando de favoritos...',
+            style: TextStyle(color: AppTheme.White),
+          ),
+          backgroundColor: AppTheme.primaryColor,
           duration: Duration(seconds: 1),
         ),
       );
@@ -99,9 +106,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Eliminado de favoritos'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text('Eliminado de favoritos',
+              style: TextStyle(color: AppTheme.White),
+            ),
+            backgroundColor: AppTheme.successColor,
           ),
         );
       }
@@ -110,8 +119,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
         setState(() => _favorites.add(favorite));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al eliminar: $e'),
-            backgroundColor: Colors.red,
+            content: Text('Error al eliminar: $e',
+              style: TextStyle(color: AppTheme.White),
+            ),
+            backgroundColor: AppTheme.errorColor,
           ),
         );
       }
@@ -122,19 +133,29 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Favoritos'),
+        title: Text('Mis Favoritos', style: TextStyle(color: AppTheme.text)),
         centerTitle: true,
+        backgroundColor: AppTheme.backgroundColor,
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadFavorites,
-        child: _buildContent(),
+      body: Container(
+        color: AppTheme.backgroundColor,
+        child: RefreshIndicator(
+          onRefresh: _loadFavorites,
+          color: AppTheme.accentColor,
+          backgroundColor: AppTheme.lightTurquoise,
+          child: _buildContent(),
+        ),
       ),
     );
   }
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: CircularProgressIndicator(
+          color: AppTheme.accentColor,
+        ),
+      );
     }
 
     if (_error != null) {
@@ -145,18 +166,22 @@ class _FavoritesPageState extends State<FavoritesPage> {
             Icon(
               Icons.error_outline,
               size: 48,
-              color: Theme.of(context).colorScheme.error,
+              color: AppTheme.errorColor,
             ),
             const SizedBox(height: 16),
             Text(
               _error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(color: AppTheme.errorColor),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _loadFavorites,
               icon: const Icon(Icons.refresh),
               label: const Text('Reintentar'),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppTheme.accentColor,
+                foregroundColor: AppTheme.White,
+              ),
             ),
           ],
         ),

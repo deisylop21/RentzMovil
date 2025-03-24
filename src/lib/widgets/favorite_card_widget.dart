@@ -17,14 +17,13 @@ class FavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Card(
-      elevation: 0, // MD3 prefiere menos sombras
+      elevation: 0,
       margin: const EdgeInsets.only(bottom: 16),
+      color: AppTheme.backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colorScheme.outline.withOpacity(0.1)), // Borde sutil
+        side: BorderSide(color: AppTheme.grey.withOpacity(0.3)),
       ),
       child: InkWell(
         onTap: onTap,
@@ -33,7 +32,7 @@ class FavoriteCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildImage(),
-            _buildContent(colorScheme),
+            _buildContent(),
           ],
         ),
       ),
@@ -65,13 +64,13 @@ class FavoriteCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: AppTheme.secondaryColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 'PROMOCIÓN',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppTheme.White,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -82,7 +81,7 @@ class FavoriteCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(ColorScheme colorScheme) {
+  Widget _buildContent() {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -93,17 +92,8 @@ class FavoriteCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
+              color: AppTheme.text,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            favorite.descripcion,
-            style: TextStyle(
-              color: colorScheme.onSurfaceVariant,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 16),
           Row(
@@ -115,19 +105,13 @@ class FavoriteCard extends StatelessWidget {
                   if (favorite.esPromocion && favorite.precioPromocion != null)
                     Text(
                       '\$${favorite.precio}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        decoration: TextDecoration.lineThrough,
-                        color: colorScheme.outline,
-                      ),
+                      style: AppTheme.oldPriceStyle,
                     ),
                   Text(
                     '\$${favorite.esPromocion ? favorite.precioPromocion : favorite.precio}',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: favorite.esPromocion ? Colors.red : colorScheme.primary,
-                    ),
+                    style: favorite.esPromocion
+                        ? AppTheme.promotionalPriceStyle
+                        : AppTheme.priceStyle,
                   ),
                 ],
               ),
@@ -136,7 +120,8 @@ class FavoriteCard extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline),
                 label: const Text('Eliminar'),
                 style: FilledButton.styleFrom(
-                  foregroundColor: Colors.red,
+                  foregroundColor: AppTheme.errorColor,
+                  backgroundColor: AppTheme.errorColor.withOpacity(0.1),
                 ),
               ),
             ],
@@ -153,9 +138,11 @@ class _ImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: const Center(
-        child: CircularProgressIndicator(),
+      color: AppTheme.lightTurquoise,
+      child: Center(
+        child: CircularProgressIndicator(
+          color: AppTheme.accentColor,
+        ),
       ),
     );
   }
@@ -166,17 +153,20 @@ class _ImageError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      color: colorScheme.surfaceVariant,
+      color: AppTheme.lightTurquoise,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 40, color: colorScheme.error),
+          Icon(
+              Icons.error_outline,
+              size: 40,
+              color: AppTheme.errorColor
+          ),
           const SizedBox(height: 8),
           Text(
             'Error al cargar la imagen',
-            style: TextStyle(color: colorScheme.error),
+            style: TextStyle(color: AppTheme.errorColor),
           ),
         ],
       ),

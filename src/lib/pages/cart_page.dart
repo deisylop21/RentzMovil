@@ -184,15 +184,6 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
           content: Text("Producto eliminado del carrito"),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppTheme.successColor,
-          action: SnackBarAction(
-            label: 'DESHACER',
-            textColor: AppTheme.White,
-            onPressed: () {
-              // Functionality to add item back would go here
-              // This would require an API call to re-add the item
-              _refreshCart();
-            },
-          ),
         ),
       );
     } catch (e) {
@@ -444,7 +435,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+                        icon: Icon(Icons.delete_outline, color: AppTheme.errorColor),
                         onPressed: () => _deleteItem(item.idCarrito, index),
                         tooltip: "Eliminar",
                       ),
@@ -597,7 +588,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.White,
+        color: AppTheme.lightTurquoise,
         boxShadow: [
           BoxShadow(
             color: AppTheme.black.withOpacity(0.05),
@@ -621,7 +612,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                   "\$${_totalPrice.toStringAsFixed(2)}",
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.text,
                   ),
                 ),
               ],

@@ -16,6 +16,8 @@ import 'models/cart_model.dart';
 import 'theme/app_theme.dart';
 import 'services/notification_service.dart';
 import 'pages/recovery_page.dart';
+import 'models/theme_model.dart'; // Importa el ThemeModel
+import 'pages/settings_page.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -44,7 +46,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthModel()),
-        // Puedes añadir más providers aquí
+        ChangeNotifierProvider(create: (_) => ThemeModel()), // Agrega ThemeModel
       ],
       child: MyApp(notificationService: notificationService),
     ),
@@ -78,7 +80,6 @@ class _MyAppState extends State<MyApp> {
       widget.notificationService.onNotificationTapped = (RemoteMessage message) {
         _handleNotificationTap(message);
       };
-
     } catch (e) {
       print('Error al inicializar la aplicación: $e');
     }
@@ -107,147 +108,180 @@ class _MyAppState extends State<MyApp> {
     final authModel = Provider.of<AuthModel>(context, listen: false);
     authModel.loadSession();
 
-    return MaterialApp(
-      navigatorKey: navigatorKey, // Importante para la navegación desde notificaciones
-      title: 'Renta de Mobiliario',
-      theme: AppTheme.getTheme(),
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/home',
-      onGenerateRoute: (settings) {
-        print('Recibiendo ruta: ${settings.name}');
+    return Consumer<ThemeModel>(
+      builder: (context, themeModel, child) {
+        return MaterialApp(
+          navigatorKey: navigatorKey, // Importante para la navegación desde notificaciones
+          title: 'Renta de Mobiliario',
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: AppTheme.backgroundColor,
+            colorScheme: ColorScheme.light(
+              primary: AppTheme.primaryColor,
+              secondary: AppTheme.secondaryColor,
+            ),
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppTheme.primaryColor,
+              titleTextStyle: TextStyle(color: AppTheme.White),
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: AppTheme.backgroundColor,
+            colorScheme: ColorScheme.dark(
+              primary: AppTheme.primaryColor,
+              secondary: AppTheme.secondaryColor,
+            ),
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppTheme.primaryColor,
+              titleTextStyle: TextStyle(color: AppTheme.White),
+            ),
+          ),
+          themeMode: themeModel.isDarkMode ? ThemeMode.dark : ThemeMode.light, // Alternar tema
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/home',
+          onGenerateRoute: (settings) {
+            print('Recibiendo ruta: ${settings.name}');
 
-        // Manejo especial para RentaFormPage
-        if (settings.name == '/renta-form') {
-          final args = settings.arguments;
-          if (args is CartItem) {
-            return MaterialPageRoute(
-              builder: (context) => RentaFormPage(cartItem: args),
-              settings: settings,
-            );
-          } else {
-            return MaterialPageRoute(
-              builder: (context) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Error: No se proporcionó un producto válido"),
-                    backgroundColor: Colors.red,
-                  ),
+            // Manejo especial para RentaFormPage
+            if (settings.name == '/renta-form') {
+              final args = settings.arguments;
+              if (args is CartItem) {
+                return MaterialPageRoute(
+                  builder: (context) => RentaFormPage(cartItem: args),
+                  settings: settings,
                 );
-                return CartPage();
-              },
-            );
-          }
-        }
-
-        // Manejo de deep linking y rutas dinámicas
-        if (settings.name != null) {
-          try {
-            final uri = Uri.parse(settings.name!);
-            print('URI parseada: $uri');
-
-            if (uri.host == 'rentzmx.com') {
-              final pathSegments = uri.pathSegments;
-              if (pathSegments.length >= 2 && pathSegments[0] == 'producto') {
-                final productId = int.tryParse(pathSegments[1]);
-                print('ID del producto encontrado (URL completa): $productId');
-
-                if (productId != null) {
-                  return MaterialPageRoute(
-                    builder: (context) => ProductDetailPage(productId: productId),
-                    settings: RouteSettings(
-                      name: '/product-detail',
-                      arguments: productId,
-                    ),
-                  );
-                }
-              }
-            } else if (settings.name!.startsWith('/producto/')) {
-              final segments = uri.pathSegments;
-              if (segments.length >= 2 && segments[0] == 'producto') {
-                final productId = int.tryParse(segments[1]);
-                print('ID del producto encontrado (ruta interna): $productId');
-
-                if (productId != null) {
-                  return MaterialPageRoute(
-                    builder: (context) => ProductDetailPage(productId: productId),
-                    settings: RouteSettings(
-                      name: '/product-detail',
-                      arguments: productId,
-                    ),
-                  );
-                }
+              } else {
+                return MaterialPageRoute(
+                  builder: (context) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error: No se proporcionó un producto válido"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return CartPage();
+                  },
+                );
               }
             }
-          } catch (e) {
-            print('Error parseando URL: $e');
-          }
-        }
 
-        // Rutas normales con manejo de argumentos
-        switch (settings.name) {
-          case '/home':
-            return MaterialPageRoute(
-              builder: (_) => HomePage(),
-              settings: settings,
-            );
-          case '/login':
-            return MaterialPageRoute(
-              builder: (_) => LoginPage(),
-              settings: settings,
-            );
-          case '/register':
-            return MaterialPageRoute(
-              builder: (_) => RegisterPage(),
-              settings: settings,
-            );
-          case '/cart':
-            return MaterialPageRoute(
-              builder: (_) => CartPage(),
-              settings: settings,
-            );
-          case '/profile':
-            return MaterialPageRoute(
-              builder: (_) => ProfilePage(),
-              settings: settings,
-            );
-          case '/direcciones':
-            return MaterialPageRoute(
-              builder: (_) => DireccionesPage(),
-              settings: settings,
-            );
-          case '/recovery':
-            return MaterialPageRoute(
-              builder: (_) => RecoveryPage(),
-              settings: settings,
-            );
-          case '/product-detail':
-            if (settings.arguments is int) {
-              final productId = settings.arguments as int;
-              return MaterialPageRoute(
-                builder: (_) => ProductDetailPage(productId: productId),
-                settings: settings,
-              );
-            } else {
-              return MaterialPageRoute(
-                builder: (_) {
-                  ScaffoldMessenger.of(_).showSnackBar(
-                    SnackBar(
-                      content: Text("Error: ID de producto no válido"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return HomePage();
-                },
-              );
+            // Manejo de deep linking y rutas dinámicas
+            if (settings.name != null) {
+              try {
+                final uri = Uri.parse(settings.name!);
+                print('URI parseada: $uri');
+
+                if (uri.host == 'rentzmx.com') {
+                  final pathSegments = uri.pathSegments;
+                  if (pathSegments.length >= 2 && pathSegments[0] == 'producto') {
+                    final productId = int.tryParse(pathSegments[1]);
+                    print('ID del producto encontrado (URL completa): $productId');
+
+                    if (productId != null) {
+                      return MaterialPageRoute(
+                        builder: (context) => ProductDetailPage(productId: productId),
+                        settings: RouteSettings(
+                          name: '/product-detail',
+                          arguments: productId,
+                        ),
+                      );
+                    }
+                  }
+                } else if (settings.name!.startsWith('/producto/')) {
+                  final segments = uri.pathSegments;
+                  if (segments.length >= 2 && segments[0] == 'producto') {
+                    final productId = int.tryParse(segments[1]);
+                    print('ID del producto encontrado (ruta interna): $productId');
+
+                    if (productId != null) {
+                      return MaterialPageRoute(
+                        builder: (context) => ProductDetailPage(productId: productId),
+                        settings: RouteSettings(
+                          name: '/product-detail',
+                          arguments: productId,
+                        ),
+                      );
+                    }
+                  }
+                }
+              } catch (e) {
+                print('Error parseando URL: $e');
+              }
             }
-          default:
-            return MaterialPageRoute(
-              builder: (_) => HomePage(),
-              settings: settings,
-            );
-        }
+
+            // Rutas normales con manejo de argumentos
+            switch (settings.name) {
+              case '/home':
+                return MaterialPageRoute(
+                  builder: (_) => HomePage(),
+                  settings: settings,
+                );
+              case '/login':
+                return MaterialPageRoute(
+                  builder: (_) => LoginPage(),
+                  settings: settings,
+                );
+              case '/register':
+                return MaterialPageRoute(
+                  builder: (_) => RegisterPage(),
+                  settings: settings,
+                );
+              case '/cart':
+                return MaterialPageRoute(
+                  builder: (_) => CartPage(),
+                  settings: settings,
+                );
+              case '/profile':
+                return MaterialPageRoute(
+                  builder: (_) => ProfilePage(),
+                  settings: settings,
+                );
+              case '/direcciones':
+                return MaterialPageRoute(
+                  builder: (_) => DireccionesPage(),
+                  settings: settings,
+                );
+              case '/recovery':
+                return MaterialPageRoute(
+                  builder: (_) => RecoveryPage(),
+                  settings: settings,
+                );
+              case '/product-detail':
+                if (settings.arguments is int) {
+                  final productId = settings.arguments as int;
+                  return MaterialPageRoute(
+                    builder: (_) => ProductDetailPage(productId: productId),
+                    settings: settings,
+                  );
+                } else {
+                  return MaterialPageRoute(
+                    builder: (_) {
+                      ScaffoldMessenger.of(_).showSnackBar(
+                        SnackBar(
+                          content: Text("Error: ID de producto no válido"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return HomePage();
+                    },
+                  );
+                }
+              case '/settings': // Nueva ruta para la página de configuración
+                return MaterialPageRoute(
+                  builder: (_) => SettingsPage(),
+                  settings: settings,
+                );
+              default:
+                return MaterialPageRoute(
+                  builder: (_) => HomePage(),
+                  settings: settings,
+                );
+            }
+          },
+          routes: {},
+        );
       },
-      routes: {},
     );
   }
 }

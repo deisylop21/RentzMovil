@@ -1,51 +1,87 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF2E3B4E);    // Azul más profundo y elegante
-  static const Color secondaryColor = Color(0xFFD4AF37);  // Dorado más sofisticado
-  static const Color accentColor = Color(0xFF58B09C);    // Verde azulado más equilibrado
-  static const Color darkTurquoise = Color(0xFF3E4A5C);   // Turquesa oscuro más sutil
-  static const Color lightTurquoise = Color(0xFFF5F5F0);  // Turquesa claro más vibrante
-  static const Color errorColor = Color(0xFFCB6D6D);     // Rojo Material 3 estándar
-  static const Color backgroundColor = Color(0xFFFAFAFA); // Blanco cálido para mejor contraste
-  static const Color White = Color(0xFFFFFFFF);
-  static const Color successColor = Color(0xFF4CAF50);
-  static const Color black = Color(0xFF000000);
-  static const Color grey = Color(0x75636363);
+  static bool _isDarkMode = false;
 
+  static void setDarkMode(bool isDark) {
+    _isDarkMode = isDark;
+  }
 
-  // Estilos de texto
-  static const TextStyle titleStyle = TextStyle(
+  // Colores del tema claro
+  static const Color primaryColorLight = Color(0xFF1A2B3C);   // Deeper blue, more professional
+  static const Color secondaryColorLight = Color(0xFFE67E22); // Warmer orange, more engaging
+  static const Color accentColorLight = Color(0xFF3498DB);    // Brighter blue, better contrast
+  static const Color darkTurquoiseLight = Color(0xFF34495E);  // Slightly darker shade for depth
+  static const Color lightTurquoiseLight = Color(0xE0C9CBCD); // Subtle blue tint for backgrounds
+  static const Color errorColorLight = Color(0xFFE74C3C);     // Brighter red for better visibility
+  static const Color backgroundColorLight = Color(0xFFF8F9FB); // Slight blue tint for warmth
+  static const Color whiteLight = Color(0xFFFFFFFF);          // Pure white
+  static const Color successColorLight = Color(0xFF2ECC71);   // Brighter green for better visibility
+  static const Color blackLight = Color(0xFF2C3E50);          // Not pure black, but dark blue-gray
+  static const Color greyLight = Color(0x75BDC3C7);           // Lighter gray with blue undertone
+  static const Color textLight = Color(0xFF000000);
+
+  // Colores del tema oscuro
+  static const Color primaryColorDark = Color(0xFF1F2833);      // Dark blue-gray
+  static const Color secondaryColorDark = Color(0xFFF39C12);    // Slightly darker orange, still visible
+  static const Color accentColorDark = Color(0xFF3498DB);       // Same accent as light for brand consistency
+  static const Color darkTurquoiseDark = Color(0xFF17202A);     // Nearly black with blue undertone
+  static const Color lightTurquoiseDark = Color(0xFF1F2833);    // Dark blue as secondary background
+  static const Color errorColorDark = Color(0xFFE74C3C);        // Same error color for consistency
+  static const Color backgroundColorDark = Color(0xFF121920);   // Very dark blue-gray
+  static const Color whiteDark = Color(0xFFECF0F1);             // Off-white for text
+  static const Color successColorDark = Color(0xFF2ECC71);      // Same success color for consistency
+  static const Color blackDark = Color(0xFF000000);             // True black for elements needing depth
+  static const Color greyDark = Color(0x757F8C8D);              // Medium gray with slight blue tint
+  static const Color textDark = Color(0xA1FFFFFF);
+
+  // Colores dinámicos
+  static Color get primaryColor => _isDarkMode ? primaryColorDark : primaryColorLight;
+  static Color get secondaryColor => _isDarkMode ? secondaryColorDark : secondaryColorLight;
+  static Color get accentColor => _isDarkMode ? accentColorDark : accentColorLight;
+  static Color get darkTurquoise => _isDarkMode ? darkTurquoiseDark : darkTurquoiseLight;
+  static Color get lightTurquoise => _isDarkMode ? lightTurquoiseDark : lightTurquoiseLight;
+  static Color get errorColor => _isDarkMode ? errorColorDark : errorColorLight;
+  static Color get backgroundColor => _isDarkMode ? backgroundColorDark : backgroundColorLight;
+  static Color get White => _isDarkMode ? whiteDark : whiteLight;
+  static Color get successColor => _isDarkMode ? successColorDark : successColorLight;
+  static Color get black => _isDarkMode ? blackDark : blackLight;
+  static Color get grey => _isDarkMode ? greyDark : greyLight;
+  static Color get text => _isDarkMode ? textDark : textLight;
+  static Color get text2 => _isDarkMode ? textDark : primaryColorLight;
+
+  // Estilos de texto dinámicos
+  static TextStyle get titleStyle => TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.bold,
-    color: primaryColor,
+    color: text,
   );
 
-  static const TextStyle subtitleStyle = TextStyle(
+  static TextStyle get subtitleStyle => TextStyle(
     fontSize: 16,
-    color: Color(0xFF666666),
+    color: grey,
   );
 
-  static const TextStyle priceStyle = TextStyle(
+  static TextStyle get priceStyle => TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
     color: accentColor,
   );
 
-  static const TextStyle promotionalPriceStyle = TextStyle(
+  static TextStyle get promotionalPriceStyle => TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
     color: secondaryColor,
   );
 
-  static const TextStyle oldPriceStyle = TextStyle(
+  static TextStyle get oldPriceStyle => TextStyle(
     fontSize: 16,
     decoration: TextDecoration.lineThrough,
-    color: Colors.grey,
+    color: grey,
   );
 
   // Estilos de botones
-  static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
+  static ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
     backgroundColor: primaryColor,
     foregroundColor: Colors.white,
     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -54,7 +90,7 @@ class AppTheme {
     ),
   );
 
-  static final ButtonStyle secondaryButtonStyle = ElevatedButton.styleFrom(
+  static ButtonStyle get secondaryButtonStyle => ElevatedButton.styleFrom(
     backgroundColor: secondaryColor,
     foregroundColor: Colors.white,
     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -62,104 +98,4 @@ class AppTheme {
       borderRadius: BorderRadius.circular(8),
     ),
   );
-
-  // Tema global
-  static ThemeData getTheme() {
-    return ThemeData(
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: backgroundColor,
-      colorScheme: ColorScheme(
-        brightness: Brightness.light,
-        primary: primaryColor,
-        secondary: secondaryColor,
-        error: errorColor,
-        surface: backgroundColor,
-        background: backgroundColor,
-        onPrimary: Colors.white,
-        onSecondary: Colors.black,
-        onSurface: Colors.black,
-        onBackground: Colors.black,
-        onError: Colors.white,
-      ),
-
-      // Tema de AppBar
-      appBarTheme: AppBarTheme(
-        backgroundColor: primaryColor,
-        titleTextStyle: titleStyle.copyWith(color: Colors.white),
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-
-      // Tema de texto
-      textTheme: TextTheme(
-        headlineLarge: titleStyle,
-        headlineMedium: titleStyle.copyWith(fontSize: 18),
-        bodyLarge: subtitleStyle,
-        bodyMedium: subtitleStyle.copyWith(fontSize: 14),
-      ),
-
-      // Tema de botones elevados
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: primaryButtonStyle,
-      ),
-
-      // Tema de botones de texto
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: primaryColor,
-          textStyle: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-
-      // Tema de botones con contorno
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: primaryColor,
-          side: BorderSide(color: primaryColor),
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-
-      // Tema de campos de entrada
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.grey[50],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: darkTurquoise, width: 2),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: errorColor),
-        ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-
-      // Tema de tarjetas
-      cardTheme: CardTheme(
-        color: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-
-      // Tema de iconos
-      iconTheme: IconThemeData(
-        color: primaryColor,
-        size: 24,
-      ),
-    );
-  }
 }

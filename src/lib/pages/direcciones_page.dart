@@ -48,7 +48,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppTheme.primaryColor, AppTheme.darkTurquoise],
+              colors: [AppTheme.primaryColor, AppTheme.primaryColor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -69,7 +69,7 @@ class _DireccionesPageState extends State<DireccionesPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppTheme.White, AppTheme.White],
+            colors: [AppTheme.backgroundColor, AppTheme.backgroundColor],
           ),
         ),
         child: FutureBuilder<List<Direccion>>(
@@ -108,8 +108,8 @@ class _DireccionesPageState extends State<DireccionesPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _agregarDireccion,
         child: Icon(Icons.add_location_alt, size: 24),
-        backgroundColor: AppTheme.accentColor,
-        foregroundColor: AppTheme.White,
+        backgroundColor: AppTheme.accentColor, //Hola este es el de afuera
+        foregroundColor: AppTheme.White,//Aca? y este es el de adentro
         elevation: 4,
         mini: true,
         shape: RoundedRectangleBorder(

@@ -298,7 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               child: Icon(
                 icon,
-                color: AppTheme.primaryColor,
+                color: AppTheme.text2,//icono
                 size: 24,
               ),
             ),
@@ -384,7 +384,7 @@ class _ProfilePageState extends State<ProfilePage> {
             gradient: LinearGradient(
               colors: [
                 AppTheme.primaryColor,
-                AppTheme.darkTurquoise,
+                AppTheme.primaryColor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -486,10 +486,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-            Container(
+            Container(//este
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: AppTheme.errorColor, //Hola//checar//
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),

@@ -98,12 +98,12 @@ class DireccionCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.1),
+        color: AppTheme.grey.withOpacity(0.1),//afuera
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
         Icons.location_on,
-        color: AppTheme.primaryColor,
+        color: AppTheme.text2,//dentro
         size: 24,
       ),
     );
@@ -119,7 +119,7 @@ class DireccionCard extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppTheme.text,//
           ),
         ),
         if (direccion.numeroInterior != null && direccion.numeroInterior!.isNotEmpty)

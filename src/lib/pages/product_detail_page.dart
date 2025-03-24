@@ -44,26 +44,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       );
       return;
     }
-
     setState(() => _isSharing = true);
-
     try {
       // Crear el deep link
       final productUrl = 'https://rentzmx.com/producto/${product.idProducto}';
-
       final shareText = '''
 ¡Mira este increíble producto en Rentz!
-
 📦 ${product.nombreProducto}
 📝 ${product.descripcion}
-💰 Precio: \$${product.precio}${product.esPromocion ? '\n🔥 ¡En promoción!: \$${product.precioPromocion}' : ''}
-📦 Cantidad disponible: ${product.cantidadActual}
-
-Ver producto: $productUrl
-
-¡Renta sin estrés con Rentz!
-''';
-
+💰 Precio: \$${product.precio}${product.esPromocion ? '🔥 ¡En promoción!: \$${product.precioPromocion}' : ''}
+    📦 Cantidad disponible: ${product.cantidadActual}
+    Ver producto: $productUrl
+    ¡Renta sin estrés con Rentz!
+    ''';
       await const MethodChannel('app.channel.shared.data').invokeMethod('shareText', {
         'text': shareText,
         'title': 'Compartir producto',
@@ -89,7 +82,6 @@ Ver producto: $productUrl
   // Método para actualizar la cantidad sin recargar toda la página
   void _updateQuantity(int value) {
     // Asegurar que no exceda la cantidad disponible
-    // (La validación debería hacerse aquí ya que no tenemos maxValue en el widget)
     setState(() {
       cantidad = value;
     });
@@ -108,7 +100,7 @@ Ver producto: $productUrl
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  color: AppTheme.White,
+                  color: AppTheme.backgroundColor, // Adaptado para modo oscuro
                 ),
                 child: Hero(
                   tag: 'product-${product.idProducto}',
@@ -149,7 +141,7 @@ Ver producto: $productUrl
               controller: _pageController,
               count: product.imagenes.isNotEmpty ? product.imagenes.length + 1 : 1,
               effect: WormEffect(
-                dotColor: AppTheme.primaryColor!,
+                dotColor: AppTheme.grey, // Usar color dinámico
                 activeDotColor: AppTheme.primaryColor,
                 dotHeight: 8,
                 dotWidth: 8,
@@ -164,7 +156,6 @@ Ver producto: $productUrl
   @override
   Widget build(BuildContext context) {
     final authModel = Provider.of<AuthModel>(context, listen: false);
-
     return FutureBuilder<Product>(
       future: _productFuture,
       builder: (context, snapshot) {
@@ -185,7 +176,6 @@ Ver producto: $productUrl
             ),
           );
         }
-
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
@@ -204,7 +194,7 @@ Ver producto: $productUrl
                   SizedBox(height: 16),
                   Text(
                     "Error al cargar el producto",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.text),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -217,7 +207,6 @@ Ver producto: $productUrl
             ),
           );
         }
-
         if (!snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(
@@ -236,11 +225,9 @@ Ver producto: $productUrl
             ),
           );
         }
-
         final product = snapshot.data!;
-
         return Scaffold(
-          backgroundColor: AppTheme.White,
+          backgroundColor: AppTheme.backgroundColor, // Adaptado para modo oscuro
           appBar: AppBar(
             backgroundColor: AppTheme.primaryColor,
             elevation: 0,
@@ -252,17 +239,15 @@ Ver producto: $productUrl
               IconButton(
                 icon: _isSharing
                     ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
-                    strokeWidth: 2,
-                  ),
-                )
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
+                          strokeWidth: 2,
+                        ),
+                      )
                     : Icon(Icons.share_outlined, color: AppTheme.White),
-                onPressed: _isSharing
-                    ? null
-                    : () => _shareProduct(product),
+                onPressed: _isSharing ? null : () => _shareProduct(product),
               ),
             ],
           ),
@@ -293,7 +278,7 @@ Ver producto: $productUrl
                                   child: Text(
                                     product.categoria,
                                     style: TextStyle(
-                                      color: AppTheme.primaryColor,
+                                      color: AppTheme.text,
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -307,7 +292,7 @@ Ver producto: $productUrl
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.black,
+                                color: AppTheme.text, // Adaptado para modo oscuro
                               ),
                             ),
                             SizedBox(height: 8),
@@ -316,7 +301,7 @@ Ver producto: $productUrl
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.primaryColor,
+                                color: AppTheme.text,
                               ),
                             ),
                             SizedBox(height: 16),
@@ -325,7 +310,7 @@ Ver producto: $productUrl
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.black,
+                                color: AppTheme.text, // Adaptado para modo oscuro
                               ),
                             ),
                             SizedBox(height: 8),
@@ -333,7 +318,7 @@ Ver producto: $productUrl
                               product.descripcion,
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppTheme.black,
+                                color: AppTheme.text, // Adaptado para modo oscuro
                                 height: 1.5,
                               ),
                             ),
@@ -347,10 +332,10 @@ Ver producto: $productUrl
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.White,
+                  color: AppTheme.backgroundColor, // Adaptado para modo oscuro
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.black.withOpacity(0.05),
+                      color: AppTheme.black.withOpacity(0.05), // Sombra sutil
                       blurRadius: 10,
                       offset: Offset(0, -5),
                     ),
@@ -361,11 +346,9 @@ Ver producto: $productUrl
                     QuantitySelector(
                       initialValue: cantidad,
                       onQuantityChanged: (value) {
-                        // Asegurarnos de que la cantidad no exceda la disponible
                         if (product.cantidadActual >= value) {
                           _updateQuantity(value);
                         } else {
-                          // Opcional: mostrar mensaje de error
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -376,7 +359,6 @@ Ver producto: $productUrl
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
-                          // Establecer al máximo disponible
                           _updateQuantity(product.cantidadActual);
                         }
                       },
@@ -387,53 +369,51 @@ Ver producto: $productUrl
                         onPressed: isLoading
                             ? null
                             : () async {
-                          if (authModel.token == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Inicia sesión para usar el Carrito",
-                                  style: TextStyle(color: AppTheme.White),
-                                ),
-                                backgroundColor: AppTheme.errorColor,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                            return;
-                          }
-
-                          try {
-                            setState(() => isLoading = true);
-                            await cartApi.addToCart(
-                              authModel.token!,
-                              product.idProducto,
-                              cantidad,
-                            );
-                            setState(() => isLoading = false);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "¡Producto añadido al carrito!",
-                                  style: TextStyle(color: AppTheme.White),
-                                ),
-                                backgroundColor: AppTheme.successColor,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          } catch (e) {
-                            setState(() => isLoading = false);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Error: $e",
-                                  style: TextStyle(color: AppTheme.White),
-                                ),
-                                backgroundColor: AppTheme.errorColor,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        },
+                                if (authModel.token == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "Inicia sesión para usar el Carrito",
+                                        style: TextStyle(color: AppTheme.White),
+                                      ),
+                                      backgroundColor: AppTheme.errorColor,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                try {
+                                  setState(() => isLoading = true);
+                                  await cartApi.addToCart(
+                                    authModel.token!,
+                                    product.idProducto,
+                                    cantidad,
+                                  );
+                                  setState(() => isLoading = false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "¡Producto añadido al carrito!",
+                                        style: TextStyle(color: AppTheme.White),
+                                      ),
+                                      backgroundColor: AppTheme.successColor,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                } catch (e) {
+                                  setState(() => isLoading = false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "Error: $e",
+                                        style: TextStyle(color: AppTheme.White),
+                                      ),
+                                      backgroundColor: AppTheme.errorColor,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryColor,
                           padding: EdgeInsets.symmetric(vertical: 16),
@@ -443,25 +423,26 @@ Ver producto: $productUrl
                         ),
                         child: isLoading
                             ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
-                            strokeWidth: 2,
-                          ),
-                        )
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.White),
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : Text(
-                          "Añadir al carrito",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                                "Añadir al carrito",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppTheme.text,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         );
