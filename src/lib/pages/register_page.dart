@@ -219,7 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
         )
             : null,
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: AppTheme.text5,
       ),
     );
   }
@@ -404,7 +404,7 @@ class _RegisterPageState extends State<RegisterPage> {
       margin: EdgeInsets.only(top: 16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[300]!),
       ),
