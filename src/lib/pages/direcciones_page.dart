@@ -55,11 +55,10 @@ class _DireccionesPageState extends State<DireccionesPage> {
           ),
         ),
         title: Text(
-          "Mis Direcciones",
-          style: TextStyle(
-            color: AppTheme.White,
-            fontWeight: FontWeight.bold,
-          ),
+          "Mis Direcciones", style: TextStyle(
+          color: AppTheme.White,
+          fontWeight: FontWeight.bold,
+        ),
         ),
         centerTitle: true,
         elevation: 0,

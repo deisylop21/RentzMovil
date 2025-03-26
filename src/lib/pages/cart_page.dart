@@ -211,7 +211,12 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,//
-          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: AppTheme.White)),
+          title: Text("Carrito de Compras",  style: TextStyle(
+            color: AppTheme.White,
+            fontWeight: FontWeight.bold,
+          ),
+          ),
+          centerTitle: true,
           elevation: 0,
         ),
         body: Center(
@@ -240,7 +245,12 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,//
-          title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: AppTheme.White)),
+          title: Text("Carrito de Compras",  style: TextStyle(
+            color: AppTheme.White,
+            fontWeight: FontWeight.bold,
+          ),
+          ),
+          centerTitle: true,
           elevation: 0,
         ),
         body: Center(child: CircularProgressIndicator()),
@@ -250,7 +260,12 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,//
-        title: Text("Carrito de Compras", style: AppTheme.titleStyle.copyWith(color: AppTheme.White)),
+        title: Text("Carrito de Compras",  style: TextStyle(
+          color: AppTheme.White,
+          fontWeight: FontWeight.bold,
+        ),
+        ),
+        centerTitle: true,
         elevation: 0,
         actions: [
           IconButton(

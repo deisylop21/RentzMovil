@@ -211,7 +211,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
         gradient: LinearGradient(
         colors: [
         AppTheme.primaryColor,
-        AppTheme.darkTurquoise,
+        AppTheme.primaryColor,
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -219,14 +219,13 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
     ),
     ),
     title: Text(
-    "Editar Dirección",
-    style: TextStyle(
-    color: AppTheme.White,
-    fontWeight: FontWeight.bold,
+    "Editar Dirección", style: TextStyle(
+      color: AppTheme.White,
+      fontWeight: FontWeight.bold,
     ),
     ),
-    centerTitle: true,
-    elevation: 0,
+          centerTitle: true,
+          elevation: 0,
     leading: IconButton(
     icon: Icon(Icons.arrow_back_ios, color: AppTheme.White),
     onPressed: () => Navigator.pop(context),

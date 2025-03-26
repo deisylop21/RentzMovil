@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
+                  color: AppTheme.titulob,
                 ),
               ),
 
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                 "Ingresa tus credenciales para continuar",
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppTheme.darkTurquoise,
+                  color: AppTheme.titulob,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -187,6 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
+                color: AppTheme.card,//Verde
                 child: Padding(
                   padding: EdgeInsets.all(16),
                   child: Column(
@@ -195,24 +196,24 @@ class _LoginPageState extends State<LoginPage> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
+                        style: TextStyle(color: AppTheme.black),//
                         decoration: InputDecoration(
                           labelText: 'Correo Electrónico',
-                          hintText: 'ejemplo@correo.com',
-                          prefixIcon: Icon(Icons.email_outlined, color: AppTheme.darkTurquoise),
+                          labelStyle: TextStyle(color: AppTheme.black),//
+                          prefixIcon: Icon(Icons.email_outlined, color: AppTheme.secondaryColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppTheme.primaryColor),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppTheme.darkTurquoise.withOpacity(0.3)),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppTheme.secondaryColor),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppTheme.darkTurquoise, width: 2),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
                           ),
                           filled: true,
-                          fillColor: AppTheme.White,
+                          fillColor: AppTheme.text5,//Verdeno
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         onChanged: (value) {
@@ -232,31 +233,31 @@ class _LoginPageState extends State<LoginPage> {
                       TextFormField(
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible,
+                        style: TextStyle(color: AppTheme.black),
                         decoration: InputDecoration(
                           labelText: 'Contraseña',
-                          hintText: '••••••••',
-                          prefixIcon: Icon(Icons.lock_outline, color: AppTheme.darkTurquoise),
+                          labelStyle: TextStyle(color: AppTheme.black),//
+                          prefixIcon: Icon(Icons.lock_outline, color: AppTheme.secondaryColor),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                              color: AppTheme.darkTurquoise,
+                              color: AppTheme.secondaryColor,
                             ),
                             onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppTheme.primaryColor),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppTheme.darkTurquoise.withOpacity(0.3)),
+                            borderSide: BorderSide(color: AppTheme.secondaryColor),//
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppTheme.darkTurquoise, width: 2),
+                            borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),//
                           ),
                           filled: true,
-                          fillColor: AppTheme.White,
+                          fillColor: AppTheme.text5,
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                       ),

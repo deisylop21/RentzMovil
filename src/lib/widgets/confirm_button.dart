@@ -4,19 +4,19 @@ import '../theme/app_theme.dart';
 class ConfirmButton extends StatelessWidget {
   final bool isLoading;
   final bool isSubmitting;
-  final VoidCallback onConfirm;
+  final VoidCallback onPressed;
 
   const ConfirmButton({
     Key? key,
     required this.isLoading,
     required this.isSubmitting,
-    required this.onConfirm,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: (isLoading || isSubmitting) ? null : onConfirm,
+      onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
@@ -42,7 +42,8 @@ class ConfirmButton extends StatelessWidget {
               ),
             Text(
               isSubmitting ? "Procesando..." : "Confirmar Renta",
-              style: const TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18,
+              color: AppTheme.text),
             ),
           ],
         ),

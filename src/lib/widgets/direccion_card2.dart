@@ -6,23 +6,21 @@ class DireccionCard extends StatelessWidget {
   final List<Direccion> direcciones;
   final Direccion? direccionSeleccionada;
   final Function(Direccion?) onDireccionChanged;
-  final VoidCallback onRecargarDirecciones;
+  final VoidCallback onAddDireccionPressed;
 
   const DireccionCard({
     Key? key,
     required this.direcciones,
     required this.direccionSeleccionada,
     required this.onDireccionChanged,
-    required this.onRecargarDirecciones,
+    required this.onAddDireccionPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -36,16 +34,16 @@ class DireccionCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 IconButton(
-                  icon: Icon(Icons.add_location_alt),
+                  icon: const Icon(Icons.add_location_alt),
                   onPressed: () => Navigator.pushNamed(context, '/direcciones'),
                   tooltip: 'Agregar Nueva Dirección',
-                  color: Theme.of(context).primaryColor,
+                  color: AppTheme.text,
                 ),
               ],
             ),
             const SizedBox(height: 12),
             if (direcciones.isEmpty)
-              _buildNoDireccionesWidget(context)
+              _buildNoDireccionesWidget(onAddDireccionPressed)
             else
               Column(
                 children: [
@@ -70,13 +68,15 @@ class DireccionCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   TextButton.icon(
                     onPressed: () async {
+                      // Navegar a la pantalla de direcciones
                       await Navigator.pushNamed(context, '/direcciones');
-                      onRecargarDirecciones();
+                      // Actualizar las direcciones después de regresar
+                      onAddDireccionPressed();
                     },
                     icon: const Icon(Icons.add_circle_outline),
                     label: const Text("Agregar Nueva Dirección"),
                     style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: AppTheme.text,
                     ),
                   ),
                 ],
@@ -87,7 +87,7 @@ class DireccionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNoDireccionesWidget(BuildContext context) {
+  Widget _buildNoDireccionesWidget(VoidCallback onAddDireccionPressed) {
     return Column(
       children: [
         Icon(
@@ -95,7 +95,7 @@ class DireccionCard extends StatelessWidget {
           size: 48,
           color: AppTheme.grey,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         const Text(
           "No hay direcciones registradas",
           style: TextStyle(fontSize: 16),
@@ -103,10 +103,7 @@ class DireccionCard extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ElevatedButton.icon(
-          onPressed: () async {
-            await Navigator.pushNamed(context, '/direcciones');
-            onRecargarDirecciones();
-          },
+          onPressed: onAddDireccionPressed,
           icon: const Icon(Icons.add_location),
           label: const Text("Agregar Dirección"),
           style: ElevatedButton.styleFrom(

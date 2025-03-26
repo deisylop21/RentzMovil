@@ -393,7 +393,10 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         title: Text(
           "Mi Perfil",
-          style: AppTheme.titleStyle.copyWith(color: Colors.white),//1
+          style: TextStyle(
+            color: AppTheme.White,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         elevation: 0,

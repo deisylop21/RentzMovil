@@ -435,7 +435,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 "Añadir al carrito",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: AppTheme.text,
+                                  color: AppTheme.card2,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

@@ -5,23 +5,19 @@ class FechasCard extends StatelessWidget {
   final DateTime? fechaInicio;
   final DateTime? fechaFinal;
   final VoidCallback onSeleccionarFecha;
-  final String Function(DateTime) formatearFecha;
 
   const FechasCard({
     Key? key,
     required this.fechaInicio,
     required this.fechaFinal,
     required this.onSeleccionarFecha,
-    required this.formatearFecha,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -30,7 +26,7 @@ class FechasCard extends StatelessWidget {
             Row(
               children: [
                 Icon(Icons.chair, color: AppTheme.text, size: 24),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   "Fechas de Renta",
                   style: Theme.of(context).textTheme.titleLarge,
@@ -40,26 +36,28 @@ class FechasCard extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: onSeleccionarFecha,
-              icon: Icon(Icons.calendar_today, color: AppTheme.backgroundColor),
+              icon: Icon(Icons.calendar_today, color: AppTheme.White),
               label: fechaInicio == null
-                  ? Text("Seleccionar Fecha de Inicio")
+                  ? const Text("Seleccionar Fecha de Inicio")
                   : Column(
                 children: [
                   Text(
-                    "Inicio: ${formatearFecha(fechaInicio!)}",
+                    "Inicio: ${_formatearFecha(fechaInicio!)}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 14,
+                    color: AppTheme.text),
                   ),
                   Text(
-                    "Fin: ${formatearFecha(fechaFinal!)}",
+                    "Fin: ${_formatearFecha(fechaFinal!)}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 14,
+                    color: AppTheme.text),
                   ),
                 ],
               ),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
-                backgroundColor: AppTheme.primaryColor,
+                backgroundColor: AppTheme.backgroundColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -69,5 +67,13 @@ class FechasCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatearFecha(DateTime fecha) {
+    final meses = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+    return "${fecha.day} de ${meses[fecha.month - 1]} del ${fecha.year}";
   }
 }

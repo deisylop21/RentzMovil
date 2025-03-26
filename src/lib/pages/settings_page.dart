@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/theme_model.dart'; // Importa el ThemeModel
+import '../theme/app_theme.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Configuración'),
+        title: Text('Configuración', style: TextStyle(
+          color: AppTheme.White,
+          fontWeight: FontWeight.bold,
+        ),
+        ),
+        centerTitle: true,
+        elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),

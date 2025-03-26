@@ -133,9 +133,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis Favoritos', style: TextStyle(color: AppTheme.text)),
+        title: Text('Mis Favoritos',  style: TextStyle(
+          color: AppTheme.White,
+          fontWeight: FontWeight.bold,
+        ),
+        ),
         centerTitle: true,
-        backgroundColor: AppTheme.backgroundColor,
+        elevation: 0,
+        backgroundColor: AppTheme.primaryColor,
       ),
       body: Container(
         color: AppTheme.backgroundColor,

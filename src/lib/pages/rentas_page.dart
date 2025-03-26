@@ -275,7 +275,6 @@ class _RentasPageState extends State<RentasPage> {
           style: TextStyle(
             color: AppTheme.White,
             fontWeight: FontWeight.bold,
-            fontSize: 22,
           ),
         ),
         centerTitle: true,
