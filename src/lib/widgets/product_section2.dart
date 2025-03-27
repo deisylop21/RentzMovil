@@ -21,6 +21,7 @@ class ProductSection extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
+      color: AppTheme.backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -33,7 +34,7 @@ class ProductSection extends StatelessWidget {
                   children: [
                     Icon(
                       _getCategoryIcon(category),
-                      color: AppTheme.primaryColor,
+                      color: AppTheme.text,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -41,7 +42,7 @@ class ProductSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
+                        color: AppTheme.text,
                       ),
                     ),
                   ],

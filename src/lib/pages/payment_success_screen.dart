@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PaymentSuccessScreen extends StatelessWidget {
+class PagoExitosoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

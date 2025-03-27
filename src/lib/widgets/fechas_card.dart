@@ -38,7 +38,11 @@ class FechasCard extends StatelessWidget {
               onPressed: onSeleccionarFecha,
               icon: Icon(Icons.calendar_today, color: AppTheme.White),
               label: fechaInicio == null
-                  ? const Text("Seleccionar Fecha de Inicio")
+                  ? Text("Seleccionar Fecha de Inicio", style: TextStyle(
+                color: AppTheme.text,
+                fontWeight: FontWeight.bold,
+              ),
+              )
                   : Column(
                 children: [
                   Text(

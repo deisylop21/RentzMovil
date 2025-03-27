@@ -72,21 +72,33 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
   Widget _buildStatusChip(String status) {
     Color statusColor;
     String statusText;
-    switch (status.toLowerCase()) {
+    switch (status.toLowerCase().trim()) {
       case 'pendiente_pago':
-        statusColor = AppTheme.secondaryColor;
-        statusText = 'Pendiente de Pago';
+        statusColor = AppTheme.errorColor;
+        statusText = 'Pendiente de pago'; // Mantener consistencia en mayúsculas
         break;
-      case 'activo':
+      case 'pendiente':
         statusColor = AppTheme.successColor;
-        statusText = 'Activo';
+        statusText = 'Pagado';
+        break;
+      case 'en transito_envio':
+        statusColor = AppTheme.successColor;
+        statusText = 'Enviado - En tránsito'; // Mejor formato y ortografía
+        break;
+      case 'en transito_recoleccion':
+        statusColor = AppTheme.secondaryColor;
+        statusText = 'En recolección'; // Ortografía correcta
         break;
       case 'finalizado':
-        statusColor = AppTheme.primaryColor;
+        statusColor = AppTheme.text;
         statusText = 'Finalizado';
         break;
+      case 'entregado':
+        statusColor = AppTheme.successColorDark;
+        statusText = 'entregado';
+        break;
       default:
-        statusColor = AppTheme.grey;
+        statusColor = AppTheme.text;
         statusText = status;
     }
     return Container(
@@ -115,7 +127,7 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
         gradient: LinearGradient(
         colors: [
         AppTheme.primaryColor,
-        AppTheme.darkTurquoise,
+        AppTheme.primaryColor,
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -123,13 +135,13 @@ class _RentaDetailPageState extends State<RentaDetailPage> {
     ),
     ),
     title: Text(
-    'Detalles de la Renta',
-    style: TextStyle(
-    color: AppTheme.White,
-    fontWeight: FontWeight.bold,
+    'Detalles de la Renta', style: TextStyle(
+      color: AppTheme.White,
+      fontWeight: FontWeight.bold,
     ),
     ),
-    elevation: 0,
+          centerTitle: true,
+          elevation: 0,
     ),
     body: FutureBuilder<Renta>(
     future: _rentaFuture,

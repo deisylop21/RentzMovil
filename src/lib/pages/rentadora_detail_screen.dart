@@ -573,7 +573,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
             Icon(
               Icons.inventory_2_outlined,
               size: 64,
-              color: AppTheme.grey,
+              color: AppTheme.text,
             ),
             const SizedBox(height: 16),
             Text(
@@ -581,7 +581,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.grey,
+                color: AppTheme.text,
               ),
             ),
             const SizedBox(height: 8),
@@ -589,7 +589,7 @@ class _RentadoraDetailScreenState extends State<RentadoraDetailScreen> {
               'Vuelve más tarde para ver nuevos productos',
               style: TextStyle(
                 fontSize: 14,
-                color: AppTheme.grey,
+                color: AppTheme.text,
               ),
               textAlign: TextAlign.center,
             ),

@@ -152,11 +152,15 @@ class _RecoveryPageState extends State<RecoveryPage> {
         fillColor: AppTheme.text5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: AppTheme.secondaryColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppTheme.secondaryColor), // Cambia el color del borde cuando está habilitado
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppTheme.accentColor, width: 2),
+          borderSide: BorderSide(color: AppTheme.secondaryColor, width: 2),
         ),
       ),
       style: TextStyle(color: AppTheme.text),
@@ -181,15 +185,19 @@ class _RecoveryPageState extends State<RecoveryPage> {
             });
           },
         ),
-        filled: true,
+        filled: true, //1
         fillColor: AppTheme.text5,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: AppTheme.secondaryColor), //new
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppTheme.secondaryColor), // Cambia el color del borde cuando está habilitado
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppTheme.accentColor, width: 2),
+          borderSide: BorderSide(color: AppTheme.secondaryColor, width: 2), //aquuí
         ),
       ),
       style: TextStyle(color: AppTheme.text),

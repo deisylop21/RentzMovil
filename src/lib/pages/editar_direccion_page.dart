@@ -170,13 +170,17 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+          labelStyle: TextStyle(
+            color: AppTheme.text,  // Color de texto del label dinámico
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Icon(icon, color: AppTheme.text),
           suffixIcon: isOptional
               ? Tooltip(
             message: "Campo opcional",
             child: Icon(
               Icons.info_outline,
-              color: AppTheme.primaryColor,
+              color: AppTheme.text,
               size: 20,
             ),
           )
@@ -194,7 +198,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
             borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
           ),
           filled: true,
-          fillColor: AppTheme.White,
+          fillColor: AppTheme.container,
         ),
         validator: validator,
         keyboardType: keyboardType,
@@ -237,8 +241,8 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-    AppTheme.White,
-    AppTheme.White,
+    AppTheme.backgroundColor,
+    AppTheme.backgroundColor,
     ],
     ),
     ),
@@ -334,7 +338,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
               title: Text(
                 "Dirección Prioritaria",
                 style: TextStyle(
-                  color: AppTheme.primaryColor,
+                  color: AppTheme.text,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -342,7 +346,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
                 "Esta será tu dirección principal",
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppTheme.primaryColor,
+                  color: AppTheme.text,
                 ),
               ),
               value: direccionPrioritaria,
@@ -351,7 +355,7 @@ class _EditarDireccionPageState extends State<EditarDireccionPage> {
                   direccionPrioritaria = value;
                 });
               },
-              activeColor: AppTheme.secondaryColor,
+              activeColor: AppTheme.successColor,
             ),
           ],
         ),

@@ -80,7 +80,7 @@ class _NuevaDireccionFormState extends State<NuevaDireccionForm> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(
@@ -126,14 +126,14 @@ class _NuevaDireccionFormState extends State<NuevaDireccionForm> {
   Widget _buildHeader() {
     return Row(
       children: [
-        Icon(Icons.location_on, color: AppTheme.primaryColor),
+        Icon(Icons.location_on, color: AppTheme.text),
         SizedBox(width: 8),
         Text(
           "Nueva Dirección",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: AppTheme.primaryColor,
+            color: AppTheme.text,
           ),
         ),
         Spacer(),
@@ -326,7 +326,7 @@ class _NuevaDireccionFormState extends State<NuevaDireccionForm> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text("Cancelar"),
+            child: Text("Cancelar", style: TextStyle(color: AppTheme.text),),
           ),
         ),
         SizedBox(width: 16),

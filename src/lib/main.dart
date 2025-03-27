@@ -16,8 +16,10 @@ import 'models/cart_model.dart';
 import 'theme/app_theme.dart';
 import 'services/notification_service.dart';
 import 'pages/recovery_page.dart';
-import 'models/theme_model.dart'; // Importa el ThemeModel
+import 'models/theme_model.dart';
 import 'pages/settings_page.dart';
+import 'pages/pago_exitoso_page.dart';
+import 'pages/pago_fallido_page.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -46,7 +48,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthModel()),
-        ChangeNotifierProvider(create: (_) => ThemeModel()), // Agrega ThemeModel
+        ChangeNotifierProvider(create: (_) => ThemeModel()),
       ],
       child: MyApp(notificationService: notificationService),
     ),
@@ -111,7 +113,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer<ThemeModel>(
       builder: (context, themeModel, child) {
         return MaterialApp(
-          navigatorKey: navigatorKey, // Importante para la navegación desde notificaciones
+          navigatorKey: navigatorKey,
           title: 'Renta de Mobiliario',
           theme: ThemeData(
             brightness: Brightness.light,
@@ -137,7 +139,7 @@ class _MyAppState extends State<MyApp> {
               titleTextStyle: TextStyle(color: AppTheme.White),
             ),
           ),
-          themeMode: themeModel.isDarkMode ? ThemeMode.dark : ThemeMode.light, // Alternar tema
+          themeMode: themeModel.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           debugShowCheckedModeBanner: false,
           initialRoute: '/home',
           onGenerateRoute: (settings) {
@@ -187,6 +189,16 @@ class _MyAppState extends State<MyApp> {
                         ),
                       );
                     }
+                  } else if (uri.path == '/pago-exitoso') {
+                    return MaterialPageRoute(
+                      builder: (_) => const PagoExitosoPage(),
+                      settings: settings,
+                    );
+                  } else if (uri.path == '/pago-fallido') {
+                    return MaterialPageRoute(
+                      builder: (_) => const PagoFallidoPage(),
+                      settings: settings,
+                    );
                   }
                 } else if (settings.name!.startsWith('/producto/')) {
                   final segments = uri.pathSegments;
@@ -247,6 +259,16 @@ class _MyAppState extends State<MyApp> {
                   builder: (_) => RecoveryPage(),
                   settings: settings,
                 );
+              case '/pago-exitoso':
+                return MaterialPageRoute(
+                  builder: (_) => const PagoExitosoPage(),
+                  settings: settings,
+                );
+              case '/pago-fallido':
+                return MaterialPageRoute(
+                  builder: (_) => const PagoFallidoPage(),
+                  settings: settings,
+                );
               case '/product-detail':
                 if (settings.arguments is int) {
                   final productId = settings.arguments as int;
@@ -267,7 +289,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 }
-              case '/settings': // Nueva ruta para la página de configuración
+              case '/settings':
                 return MaterialPageRoute(
                   builder: (_) => SettingsPage(),
                   settings: settings,
@@ -284,5 +306,4 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
-} //hola
-//adios
+}
