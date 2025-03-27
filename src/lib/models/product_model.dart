@@ -27,8 +27,9 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    final idProducto = json['Id_producto'] ?? json['id_producto'] ?? 0;
     return Product(
-      idProducto: json['id_producto'] ?? 0, // Evitar null en int
+      idProducto: idProducto, // Evitar null en int
       nombreProducto: json['nombre_producto'] ?? 'Sin nombre',
       categoria: json['categoria'] ?? 'Desconocida',
       cantidadActual: json['cantidad_actual'] ?? 0,

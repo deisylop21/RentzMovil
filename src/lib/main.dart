@@ -20,6 +20,7 @@ import 'models/theme_model.dart';
 import 'pages/settings_page.dart';
 import 'pages/pago_exitoso_page.dart';
 import 'pages/pago_fallido_page.dart';
+import 'pages/rentaformapage2.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -254,6 +255,14 @@ class _MyAppState extends State<MyApp> {
                   builder: (_) => DireccionesPage(),
                   settings: settings,
                 );
+              case '/renta-form-page2':
+                return MaterialPageRoute(
+                  builder: (context) {
+                    final args = ModalRoute.of(context)!.settings.arguments as List<CartItem>;
+                    return RentaFormPage2(cartItems: args);
+                  },
+                  settings: settings,
+                );
               case '/recovery':
                 return MaterialPageRoute(
                   builder: (_) => RecoveryPage(),
@@ -272,11 +281,13 @@ class _MyAppState extends State<MyApp> {
               case '/product-detail':
                 if (settings.arguments is int) {
                   final productId = settings.arguments as int;
+                  print('ID del producto recibido: $productId'); // Depuración
                   return MaterialPageRoute(
                     builder: (_) => ProductDetailPage(productId: productId),
                     settings: settings,
                   );
                 } else {
+                  print('Error: Argumento inválido para /product-detail'); // Depuración
                   return MaterialPageRoute(
                     builder: (_) {
                       ScaffoldMessenger.of(_).showSnackBar(

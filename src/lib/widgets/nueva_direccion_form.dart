@@ -339,7 +339,7 @@ class _NuevaDireccionFormState extends State<NuevaDireccionForm> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              disabledBackgroundColor: Colors.grey[300],
+              disabledBackgroundColor: AppTheme.card2,
             ),
             child: _isLoading
                 ? SizedBox(
@@ -355,6 +355,7 @@ class _NuevaDireccionFormState extends State<NuevaDireccionForm> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
+                color: AppTheme.text
               ),
             ),
           ),

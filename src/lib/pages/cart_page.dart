@@ -449,11 +449,6 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                           ],
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete_outline, color: AppTheme.errorColor),
-                        onPressed: () => _deleteItem(item.idCarrito, index),
-                        tooltip: "Eliminar",
-                      ),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -465,7 +460,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                         children: [
                           if (item.esPromocion && item.precioPromocion != null) ...[
                             Text(
-                              "Precio original: \$${item.precio}",
+                              "Precio: \$${item.precio}",
                                 style: AppTheme.priceStyle,
                             ),
                             SizedBox(height: 4),
@@ -637,12 +632,15 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Redirigir a la página de checkout
-                  Navigator.of(context).pushNamed('/checkout');
+                  // Redirigir a la nueva página RentaFormPage2
+                  Navigator.of(context).pushNamed(
+                    '/renta-form-page2',
+                    arguments: _cartItems, // Pasar los productos del carrito
+                  );
                 },
                 style: AppTheme.primaryButtonStyle,
                 child: Text(
-                  "Proceder al Pago",
+                  "Realizar Rentas",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

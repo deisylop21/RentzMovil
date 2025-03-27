@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../models/direccion_model.dart';
 import '../theme/app_theme.dart';
 
-class DireccionCard extends StatelessWidget {
+class CustomDireccionSelector extends StatelessWidget {
   final List<Direccion> direcciones;
   final Direccion? direccionSeleccionada;
   final Function(Direccion?) onDireccionChanged;
   final VoidCallback onAddDireccionPressed;
 
-  const DireccionCard({
+  const CustomDireccionSelector({
     Key? key,
     required this.direcciones,
     required this.direccionSeleccionada,
@@ -17,7 +17,9 @@ class DireccionCard extends StatelessWidget {
   }) : super(key: key);
 
   void _navigateToAddDireccion(BuildContext context) {
-    Navigator.pushNamed(context, '/direcciones');
+    Navigator.pushNamed(context, '/direcciones').then((_) {
+      onAddDireccionPressed(); // Vuelve a cargar las direcciones después de agregar una nueva
+    });
   }
 
   @override
@@ -39,7 +41,7 @@ class DireccionCard extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_location_alt),
-                  onPressed: () => Navigator.pushNamed(context, '/direcciones'),
+                  onPressed: () => _navigateToAddDireccion(context),
                   tooltip: 'Agregar Nueva Dirección',
                   color: AppTheme.text,
                 ),
@@ -47,7 +49,7 @@ class DireccionCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             if (direcciones.isEmpty)
-              _buildNoDireccionesWidget(context, onAddDireccionPressed)
+              _buildNoDireccionesWidget(context)
             else
               Column(
                 children: [
@@ -73,7 +75,7 @@ class DireccionCard extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () async {
                       await Navigator.pushNamed(context, '/direcciones');
-                      onAddDireccionPressed();
+                      onAddDireccionPressed(); // Actualiza las direcciones después de agregar una nueva
                     },
                     icon: const Icon(Icons.add_circle_outline),
                     label: const Text("Agregar Nueva Dirección"),
@@ -89,7 +91,7 @@ class DireccionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNoDireccionesWidget(BuildContext context, VoidCallback onAddDireccionPressed) {
+  Widget _buildNoDireccionesWidget(BuildContext context) {
     return Column(
       children: [
         Icon(

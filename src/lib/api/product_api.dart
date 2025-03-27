@@ -30,5 +30,19 @@ class ProductApi {
       throw Exception('Error al cargar los detalles del producto: ${response.statusCode}');
     }
   }
+
+  Future<List<Product>> fetchSimilarProducts(int productId) async {
+    final response = await http.get(Uri.parse("$baseUrl/cliente/productos/$productId/similares"));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> similarProductsJson = data['data'];
+      return similarProductsJson.map((json) => Product.fromJson(json)).toList();
+    } else {
+      throw Exception('Error al cargar productos similares: ${response.statusCode}');
+    }
+  }
 }
+
+
 

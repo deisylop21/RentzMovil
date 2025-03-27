@@ -28,11 +28,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   final PageController _pageController = PageController();
   final ProductApi productApi = ProductApi();
   Future<Product>? _productFuture;
+  Future<List<Product>>? _similarProductsFuture;
 
   @override
   void initState() {
     super.initState();
     _productFuture = productApi.fetchProductDetails(widget.productId);
+    _similarProductsFuture = productApi.fetchSimilarProducts(widget.productId);
   }
 
   Future<void> _shareProduct(Product product) async {
@@ -285,6 +287,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     ),
                                   ),
                                 ),
+
                               ],
                             ),
                             SizedBox(height: 12),
@@ -322,6 +325,131 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 color: AppTheme.text, // Adaptado para modo oscuro
                                 height: 1.5,
                               ),
+                            ),
+
+                            // Nueva sección: Productos Similares
+                            SizedBox(height: 24), // Espacio entre la descripción y los productos similares
+                            Text(
+                              "Productos Similares",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.text,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            FutureBuilder<List<Product>>(
+                              future: _similarProductsFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                                    ),
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text(
+                                      "Error al cargar productos similares",
+                                      style: TextStyle(color: AppTheme.errorColor),
+                                    ),
+                                  );
+                                }
+                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      "No hay productos similares disponibles",
+                                      style: TextStyle(color: AppTheme.grey),
+                                    ),
+                                  );
+                                }
+                                final similarProducts = snapshot.data!;
+                                return SizedBox(
+                                  height: 200, // Altura fija para los productos similares
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: similarProducts.length,
+                                    itemBuilder: (context, index) {
+                                      final product = similarProducts[index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/product-detail',
+                                            arguments: product.idProducto,
+                                          );
+                                        },
+                                        child: Container(
+                                          width: 150,
+                                          margin: EdgeInsets.only(right: 16),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.card,
+                                            borderRadius: BorderRadius.circular(12),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppTheme.black.withOpacity(0.1),
+                                                blurRadius: 5,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                                                child: Image.network(
+                                                  product.urlImagenPrincipal,
+                                                  width: double.infinity,
+                                                  height: 120,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error, stackTrace) {
+                                                    return Center(
+                                                      child: Icon(
+                                                        Icons.image_not_supported,
+                                                        size: 48,
+                                                        color: AppTheme.primaryColor,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      product.nombreProducto,
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: AppTheme.text,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4),
+                                                    Text(
+                                                      "\$${product.precio}",
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: AppTheme.secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
